@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nine Ways to Cross — System Governance Lab | ADTL, University of Amsterdam</title>
+<meta name="description" content="Design governance rules for autonomous vehicles. Discover the philosophical foundations of your system design instincts. ADTL, University of Amsterdam.">
+<meta name="author" content="Dr. Somendra Narayan, ADTL, University of Amsterdam">
+<meta property="og:title" content="Nine Ways to Cross — System Governance Lab">
+<meta property="og:description" content="An interactive system governance lab. Design coordination protocols for autonomous vehicles and discover the trade-offs embedded in every governance decision.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline';">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@300;400;500&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--uva:#c3142d;--uva-l:#e83850;--uva-dim:rgba(195,20,45,.08);--bg:#faf8f4;--bg2:#f2efe8;--bg3:#e8e4db;--sf:#fff;--brd:rgba(0,0,0,.08);--brd2:rgba(0,0,0,.14);--t1:#2c2824;--t2:#5a534b;--t3:#8a8278;--t4:#b0a898;--red:#c94040;--grn:#3a9a5c;--yel:#c9a030;--blu:#3a6fa0;--pur:#7a5aad}
+html{scroll-behavior:smooth}body{background:var(--bg);color:var(--t1);font-family:'Sora',sans-serif;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}::selection{background:var(--uva-dim);color:var(--uva)}
+.serif{font-family:'Cormorant Garamond',serif}.mono{font-family:'DM Mono',monospace}
+/* TOPBAR */
+.top{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:rgba(250,248,244,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--brd)}
+.top-brand{display:flex;align-items:center;gap:10px}.top-logo{padding:0 8px;height:26px;background:var(--uva);border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-weight:500;font-size:9px;letter-spacing:1.5px;color:#fff}.top-txt{font-size:11px;color:var(--t3)}.top-txt strong{color:var(--t1);font-weight:600}
+.top-btns{display:flex;gap:5px}.top-b{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;padding:5px 9px;border-radius:3px;border:1px solid var(--brd);background:0;color:var(--t3);cursor:pointer}.top-b:hover{color:var(--t1)}
+.top-dots{display:flex;gap:5px}.tdt{width:8px;height:8px;border-radius:50%;background:var(--bg3);cursor:pointer;transition:all .3s}.tdt.on{background:var(--uva)}.tdt.dn{background:rgba(195,20,45,.3)}
+.ov{display:none;position:fixed;top:48px;right:10px;z-index:200;width:380px;max-height:82vh;overflow-y:auto;padding:18px;background:var(--sf);border:1px solid var(--brd2);border-radius:6px;box-shadow:0 8px 32px rgba(0,0,0,.1);font-size:12.5px;color:var(--t2);line-height:1.6}.ov.show{display:block}.ov h4{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:2px;text-transform:uppercase;color:var(--uva);margin:14px 0 6px}.ov h4:first-child{margin-top:0}.ov strong{color:var(--t1)}.ov p{margin-bottom:8px}
+/* PHASES */
+.ph{display:none;min-height:100vh;padding-top:50px}.ph.on{display:block}
+.btn{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;padding:10px 20px;border-radius:4px;border:1px solid var(--uva);background:var(--uva);color:#fff;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:8px;text-decoration:none}.btn:hover{background:var(--uva-l)}.btn.sec{background:0;color:var(--t2);border-color:var(--brd2)}.btn.sec:hover{color:var(--t1)}.btn.sm{padding:7px 14px;font-size:9px}
+.lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--uva);display:flex;align-items:center;gap:8px;margin-bottom:10px}.lbl::before{content:'';width:18px;height:1px;background:var(--uva)}
+.container{max-width:1060px;margin:0 auto;padding:0 24px}
+
+/* HERO */
+.hero{min-height:calc(100vh - 50px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px 24px;position:relative}.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 28%,var(--uva-dim),transparent 60%);pointer-events:none}.hero>*{position:relative}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(30px,5vw,50px);font-weight:700;line-height:1.12;max-width:660px;margin-bottom:14px}.hero h1 em{color:var(--uva);font-style:normal}
+.hero-sub{font-size:15px;color:var(--t2);max-width:510px;line-height:1.65;margin-bottom:6px}
+.hero-q{font-family:'Cormorant Garamond',serif;font-size:17px;font-style:italic;color:var(--t3);max-width:430px;line-height:1.55;margin:12px 0 22px}
+.hero-ctx{max-width:600px;font-size:12px;color:var(--t3);line-height:1.6;padding:14px 20px;border:1px solid var(--brd);border-radius:6px;background:var(--sf);text-align:left;margin-top:26px}.hero-ctx strong{color:var(--t2)}
+/* FW */
+.fw{max-width:800px;margin:18px auto 0}.fw-t{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:2px;text-transform:uppercase;color:var(--uva);text-align:center;margin-bottom:7px}
+.fw-g{display:grid;grid-template-columns:100px repeat(3,1fr);gap:2px;font-size:10px}
+.fw-h{padding:5px;font-family:'DM Mono',monospace;font-size:7px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);text-align:center;display:flex;align-items:center;justify-content:center}
+.fw-rh{padding:5px;font-family:'DM Mono',monospace;font-size:7px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);text-align:right;display:flex;align-items:center;justify-content:flex-end;border-right:1px solid var(--brd)}
+.fw-c{padding:7px;background:var(--sf);border:1px solid var(--brd);border-radius:3px;text-align:center;cursor:pointer;transition:all .2s}.fw-c:hover,.fw-c.sel{border-color:var(--uva);background:var(--uva-dim)}
+.fw-c .fw-n{font-family:'Cormorant Garamond',serif;font-size:11px;font-weight:600;color:var(--t1)}.fw-c .fw-o{font-size:6.5px;color:var(--t4);margin-top:1px}
+.fw-det{max-width:800px;margin:0 auto;overflow:hidden;max-height:0;transition:max-height .4s;background:var(--sf);border:1px solid var(--brd);border-top:0;border-radius:0 0 6px 6px}.fw-det.open{max-height:400px;padding:14px 18px}
+.fw-det h3{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--uva);margin-bottom:2px}.fw-det .fo{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t4);margin-bottom:7px}.fw-det p{font-size:12px;color:var(--t2);line-height:1.55;margin-bottom:5px}.fw-det .fp{font-style:italic;color:var(--t3)}.fw-det .fpar{font-family:'DM Mono',monospace;font-size:9.5px;color:var(--uva);margin-top:6px;padding:6px 10px;background:var(--bg2);border-radius:3px;line-height:1.4}
+.fw-ax{font-size:9.5px;color:var(--t3);text-align:center;margin-top:6px;line-height:1.4}
+
+/* DESIGN PHASE - enriched */
+.des{padding:28px 0 80px}.des h2{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;margin-bottom:5px}.des>p{color:var(--t2);font-size:12.5px;margin-bottom:22px;max-width:600px;line-height:1.55}
+.q-card{background:var(--sf);border:1px solid var(--brd);border-radius:6px;margin-bottom:12px;overflow:hidden;transition:border-color .3s}.q-card:hover{border-color:var(--brd2)}
+.q-top{padding:14px 18px}
+.q-lbl{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:2px;text-transform:uppercase;color:var(--uva);margin-bottom:6px}
+.q-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--t1);margin-bottom:4px}
+.q-context{font-size:11.5px;color:var(--t3);line-height:1.45;margin-bottom:10px}
+.q-poles{display:flex;justify-content:space-between;gap:16px;margin-bottom:8px}.q-pole{max-width:200px;font-size:10px;color:var(--t3);line-height:1.3}.q-pole.r{text-align:right}.q-pole strong{display:block;font-size:10.5px;color:var(--t1);font-weight:600;margin-bottom:1px}
+.q-opts{display:flex;gap:3px;justify-content:center}.q-opt{flex:1;max-width:90px;padding:6px 4px;border:1px solid var(--brd);border-radius:3px;text-align:center;cursor:pointer;transition:all .2s;font-size:9px;color:var(--t3);line-height:1.2;background:var(--sf)}.q-opt:hover{border-color:var(--brd2);background:var(--bg2)}.q-opt.sel{border-color:var(--uva);background:var(--uva-dim);color:var(--uva)}.q-opt .q-num{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;display:block;margin-bottom:1px}
+/* Guidance panel */
+.q-guidance{padding:0 18px;max-height:0;overflow:hidden;transition:max-height .3s;background:var(--bg2);border-top:1px solid var(--brd)}
+.q-guidance.open{max-height:200px;padding:12px 18px}
+.q-guidance-title{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--uva);margin-bottom:5px}
+.q-guidance-body{font-size:11px;color:var(--t2);line-height:1.5}
+.q-guidance-body strong{color:var(--t1)}
+.q-guidance-prompt{font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:var(--t3);margin-top:6px;line-height:1.45}
+/* Design Identity */
+.di-bar{margin-top:16px;padding:12px 16px;background:var(--sf);border:1px solid var(--brd);border-radius:6px}
+.di-title{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t4);margin-bottom:7px}
+.di-row{display:flex;align-items:center;gap:6px;margin-bottom:4px}.di-dim{font-size:9px;color:var(--t2);width:76px;text-align:right}.di-bw{flex:1;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}.di-bf{height:100%;border-radius:2px;transition:width .3s}.di-vl{font-family:'DM Mono',monospace;font-size:8.5px;color:var(--t3);width:20px}
+.di-profile{font-size:11px;color:var(--t2);margin-top:7px;line-height:1.45;padding:7px 10px;background:var(--bg2);border-radius:4px}
+/* Infra mode indicator */
+.infra-mode{font-family:'DM Mono',monospace;font-size:9px;padding:5px 10px;border-radius:3px;border:1px solid var(--brd);color:var(--t2);margin-top:8px;text-align:center;line-height:1.4}
+.infra-mode strong{color:var(--uva)}
+
+/* SIM */
+.sim-wrap{min-height:calc(100vh - 50px);display:flex;align-items:flex-start;justify-content:center;gap:14px;padding:14px;flex-wrap:wrap;padding-top:18px}
+.sim-side{width:255px;display:flex;flex-direction:column;gap:7px}
+.sc{background:var(--sf);border:1px solid var(--brd);border-radius:5px;padding:10px 12px}.sc h3{font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:2px;text-transform:uppercase;color:var(--uva);margin-bottom:5px}.sc p{font-size:10.5px;color:var(--t2);line-height:1.4}
+.sm-g{display:grid;grid-template-columns:1fr 1fr;gap:4px}.sm-b{background:var(--bg2);border-radius:3px;padding:5px;text-align:center}.sm-n{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;color:var(--t1)}.sm-l{font-family:'DM Mono',monospace;font-size:6px;letter-spacing:.5px;text-transform:uppercase;color:var(--t3);margin-top:1px}.sm-bad{color:var(--red)!important}
+.asr{display:flex;align-items:center;gap:4px;margin-bottom:2px}.asd{font-size:8px;color:var(--t2);width:58px;text-align:right}.asw{flex:1;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}.asf{height:100%;border-radius:2px;transition:width .4s}.asv{font-family:'DM Mono',monospace;font-size:8px;color:var(--t3);width:20px;text-align:right}
+.stress-opts{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px}.stress-opt{font-family:'DM Mono',monospace;font-size:7.5px;padding:3px 7px;border:1px solid var(--brd);border-radius:3px;cursor:pointer;transition:all .2s;color:var(--t3)}.stress-opt:hover{border-color:var(--brd2)}.stress-opt.on{border-color:var(--uva);background:var(--uva-dim);color:var(--uva)}
+.ticker{max-height:80px;overflow-y:auto;font-family:'DM Mono',monospace;font-size:8px;color:var(--t3);line-height:1.5}
+.te{padding:1px 0;display:flex;gap:3px;align-items:flex-start}.te-d{width:4px;height:4px;border-radius:50%;flex-shrink:0;margin-top:3px}.te-i{background:var(--blu)}.te-w{background:var(--yel)}.te-f{background:var(--red)}.te-g{background:var(--grn)}
+.timer-bar{height:3px;background:var(--bg3);border-radius:2px;overflow:hidden;margin-top:3px}.timer-f{height:100%;background:var(--uva);transition:width .1s linear}
+.sc-banner{position:absolute;top:8px;left:50%;transform:translateX(-50%);padding:4px 12px;border-radius:3px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:#fff;opacity:0;transition:opacity .3s;pointer-events:none;z-index:10;white-space:nowrap}.sc-banner.show{opacity:1}
+.sim-cv-w{position:relative}canvas.sim-cv{border-radius:6px;box-shadow:0 4px 24px rgba(0,0,0,.1)}
+.mini-graph{width:100%;height:44px;background:var(--bg2);border-radius:3px;margin-top:3px}
+
+/* REVEAL */
+.rev{padding:28px 24px 70px;max-width:900px;margin:0 auto}
+.rev-top{text-align:center;margin-bottom:18px}.rev-pre{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--t3);margin-bottom:10px}
+.rev-id{padding:14px 18px;background:var(--bg2);border-radius:6px;margin-bottom:14px;text-align:center}
+.rev-id h3{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--uva);margin-bottom:5px}
+.rev-id-desc{font-size:13px;color:var(--t1);line-height:1.45}
+.rev-nm{font-family:'Cormorant Garamond',serif;font-size:clamp(22px,3.5vw,38px);font-weight:700;color:var(--uva);margin-bottom:3px;opacity:0;animation:fu .7s ease .2s forwards}
+.rev-or{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t4);margin-bottom:6px;opacity:0;animation:fu .6s ease .35s forwards}
+.rev-dist{font-family:'DM Mono',monospace;font-size:10px;color:var(--t3);margin-bottom:12px;opacity:0;animation:fu .5s ease .45s forwards}
+.rev-desc{font-size:13px;color:var(--t2);max-width:520px;margin:0 auto;line-height:1.6;opacity:0;animation:fu .6s ease .5s forwards}
+@keyframes fu{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+/* Radar chart */
+.rev-radar{margin:18px auto;text-align:center;opacity:0;animation:fu .6s ease .6s forwards}
+.rev-radar canvas{display:inline-block;border-radius:6px;background:var(--sf);border:1px solid var(--brd)}
+.rev-radar-legend{display:flex;gap:12px;justify-content:center;margin-top:8px;font-family:'DM Mono',monospace;font-size:9px}
+.rev-radar-legend span{display:flex;align-items:center;gap:4px}.rev-radar-legend .dot{width:8px;height:8px;border-radius:50%}
+.rev-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0;opacity:0;animation:fu .6s ease .7s forwards}
+.rv{background:var(--sf);border:1px solid var(--brd);border-radius:5px;padding:13px}.rv h4{font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--uva);margin-bottom:5px}.rv p{font-size:11.5px;color:var(--t2);line-height:1.5}
+.rv-f{border-color:rgba(201,64,64,.15);background:rgba(201,64,64,.02)}.rv-f h4{color:var(--red)}
+.rv-to{border-color:rgba(184,145,42,.2);background:rgba(184,145,42,.04)}.rv-to h4{color:var(--yel)}
+.rv-full{grid-column:1/-1}
+.ra-g{display:flex;gap:6px;flex-wrap:wrap;margin:5px 0}.ra-i{flex:1;min-width:65px;text-align:center;padding:5px;background:var(--bg2);border-radius:3px}.ra-s{font-family:'DM Mono',monospace;font-size:17px;font-weight:500}.ra-d{font-family:'DM Mono',monospace;font-size:6.5px;letter-spacing:.5px;text-transform:uppercase;color:var(--t3);margin-top:1px}
+.rev-acts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px;opacity:0;animation:fu .6s ease .9s forwards}
+.iter-note{text-align:center;font-size:10.5px;color:var(--t3);margin-top:8px;font-style:italic}
+
+/* COMPARE */
+.cmp{padding:18px 0 80px}.cmp-hdr{text-align:center;margin-bottom:12px}.cmp-hdr h2{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;margin-bottom:3px}.cmp-hdr p{font-size:11px;color:var(--t3)}
+.cmp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.cmp-cell{background:var(--sf);border:1px solid var(--brd);border-radius:5px;overflow:hidden}
+.cmp-hd{padding:5px 8px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--brd)}.cmp-nm{font-family:'Cormorant Garamond',serif;font-size:11px;font-weight:600}.cmp-or{font-family:'DM Mono',monospace;font-size:6px;letter-spacing:.5px;text-transform:uppercase;color:var(--t4)}
+.cmp-cv{width:100%;aspect-ratio:1;display:block}
+.cmp-mt{display:flex;justify-content:space-around;padding:4px 5px;background:var(--bg2)}.cmp-s{text-align:center}.cmp-sn{font-family:'DM Mono',monospace;font-size:10px;color:var(--t1)}.cmp-sl{font-family:'DM Mono',monospace;font-size:5.5px;letter-spacing:.5px;text-transform:uppercase;color:var(--t4)}
+.cmp-exp{font-family:'DM Mono',monospace;font-size:7px;text-align:center;padding:2px;color:var(--t4);cursor:pointer;border-top:1px solid var(--brd)}.cmp-exp:hover{color:var(--uva)}
+.cmp-ass{max-height:0;overflow:hidden;transition:max-height .3s;padding:0 6px}.cmp-ass.open{max-height:100px;padding:4px 6px}
+.cmp-fl{font-family:'DM Mono',monospace;font-size:6.5px;color:var(--red);text-align:center;padding:2px 4px 3px;min-height:10px}
+
+/* CONNECT */
+.con{padding:26px 0 36px}.con-hdr{text-align:center;margin-bottom:18px}.con-hdr h2{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;margin-bottom:4px}.con-hdr p{font-size:12px;color:var(--t2);max-width:540px;margin:0 auto;line-height:1.5}
+.con-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.con-cd{background:var(--sf);border:1px solid var(--brd);border-radius:5px;padding:12px;display:flex;flex-direction:column;gap:5px}
+.con-tr{font-family:'Cormorant Garamond',serif;font-size:12px;font-weight:600;color:var(--uva)}.con-ar{font-family:'DM Mono',monospace;font-size:8px;color:var(--t4)}.con-ai{font-size:11.5px;font-weight:600;color:var(--t1)}.con-bd{font-size:10px;color:var(--t2);line-height:1.45}
+.con-ex{font-family:'DM Mono',monospace;font-size:8.5px;color:var(--t3);padding:5px;background:var(--bg2);border-radius:3px;line-height:1.35}
+.con-av{font-size:9px;color:var(--red);padding:5px;background:rgba(201,64,64,.03);border-radius:3px;line-height:1.35}
+.debrief{padding:16px;background:var(--uva-dim);border:1px solid rgba(195,20,45,.1);border-radius:6px;margin-bottom:14px}.debrief h3{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--uva);margin-bottom:8px}.debrief ol{padding-left:18px;font-size:12px;color:var(--t1);line-height:1.7}
+
+/* FOOTER */
+footer{border-top:1px solid var(--brd);background:var(--bg2);padding:30px 0 18px}
+.foot-w{max-width:1040px;margin:0 auto;padding:0 24px}
+.foot-g{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:26px;margin-bottom:22px}
+.foot-c h4{font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:7px}.foot-c p{font-size:11px;color:var(--t2);line-height:1.55}.foot-c a{color:var(--uva);text-decoration:none}.foot-c a:hover{text-decoration:underline}
+.foot-au{display:flex;gap:10px}.foot-pic{width:40px;height:40px;border-radius:50%;background:var(--uva-dim);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:17px;color:var(--uva);flex-shrink:0}.foot-inf{font-size:11px;color:var(--t2);line-height:1.5}.foot-inf strong{color:var(--t1);display:block}
+.foot-bot{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid var(--brd);font-family:'DM Mono',monospace;font-size:7px;color:var(--t4)}.foot-logos{display:flex;gap:6px}.foot-l{padding:2px 5px;border:1px solid var(--brd);border-radius:2px;font-size:6.5px;letter-spacing:1px;text-transform:uppercase}
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:8px 20px;background:rgba(250,248,244,.92);backdrop-filter:blur(14px);border-top:1px solid var(--brd)}
+.bnav-l{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3)}
+@media(max-width:900px){.cmp-grid,.con-grid{grid-template-columns:1fr 1fr}.foot-g{grid-template-columns:1fr}.sim-wrap{flex-direction:column}.rev-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.cmp-grid,.con-grid{grid-template-columns:1fr}.q-poles{flex-direction:column;gap:2px}.q-pole.r{text-align:left}.q-opts{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<div class="top"><div class="top-brand"><div class="top-logo">ADTL</div><div class="top-txt">System Governance Lab</div></div><div class="top-dots" id="tdots"></div><div class="top-btns"><button class="top-b" onclick="toggleO('m')">⊕ How It Works</button><button class="top-b" onclick="toggleO('f')">⊕ Facilitator</button></div></div>
+<div class="ov" id="ov-f"></div><div class="ov" id="ov-m"></div>
+
+<div class="ph on" id="ph0"><div class="hero"><div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--t4);padding:4px 12px;border:1px solid var(--brd);border-radius:14px;margin-bottom:14px">System Governance Lab</div><h1 class="serif">Nine Ways to <em>Cross</em></h1><p class="hero-sub">Imagine a city where every vehicle is autonomous. The question isn't whether they can drive — it's <strong>how they coordinate</strong> when objectives conflict and the rules haven't been written yet.</p><p class="hero-q">"Every protocol embeds a philosophy. Every optimisation function inherits an ethics."</p><button class="btn" onclick="goP(1)">Begin the Experiment →</button><div class="hero-ctx"><strong>What this is:</strong> You will design governance rules for autonomous vehicles at an intersection — seven operational decisions about rules, fairness, authority, and coordination. Your choices create a unique system that is stress-tested live with emergencies, traffic surges, bad actors, and sensor failures. Then you discover which of nine philosophical traditions your design most structurally resembles — and can redesign to explore different trade-offs. The point is not to learn philosophy. The point is to see the consequences of your design choices, and to discover that every governance decision you make — in vehicles, in AI, in your organisation — carries philosophical commitments whether you intended them or not.</div><div class="fw"><div class="fw-t">The Nine Traditions — A Structural Framework</div><div class="fw-g" id="fwg"></div><div class="fw-ax"><strong>Columns:</strong> How is order governed? <strong>Rows:</strong> What is the moral agent?</div></div><div class="fw-det" id="fwDet"><h3 id="fwN"></h3><div class="fo" id="fwO"></div><p id="fwF"></p><p class="fp" id="fwP"></p><div class="fpar" id="fwPar"></div></div></div></div>
+
+<div class="ph" id="ph1"><div class="container des"><div class="lbl">Phase 1 · System Design</div><h2 class="serif">Design the Coordination Protocol</h2><p>Seven operational decisions. Your choices create a unique governance system — not a pre-set philosophy. For each dimension, select a position on the scale. Click any option to see what it means in practice and what trade-off it creates. Where your group disagrees is where the interesting design tensions live.</p><div id="sliders"></div><div class="di-bar" id="diBar"></div><div style="margin-top:16px;display:flex;gap:8px"><button class="btn" onclick="goP(2)">Deploy & Stress-Test →</button><button class="btn sec" onclick="goP(0)">← Back</button></div></div></div>
+
+<div class="ph" id="ph2"><div class="sim-wrap"><div class="sim-side">
+<div class="sc"><h3>Your System Under Stress</h3><p>Running your actual governance configuration. Choose which stress events to inject, then observe how your design handles pressure, disruption, and defection.</p></div>
+<div class="sc"><h3>Stress Events</h3><p style="font-size:9px;color:var(--t3);margin-bottom:4px">Select the scenarios to inject during the simulation:</p><div class="stress-opts" id="stressOpts"></div><div style="margin-top:5px;text-align:right"><button class="btn sm" id="simGo" onclick="launchSim()">Launch →</button></div></div>
+<div class="sc"><h3>Performance</h3><div class="sm-g"><div class="sm-b"><div class="sm-n" id="mT">0</div><div class="sm-l">Throughput</div></div><div class="sm-b"><div class="sm-n" id="mS">0</div><div class="sm-l">Avg km/h</div></div><div class="sm-b"><div class="sm-n" id="mW">0</div><div class="sm-l">Max Wait</div></div><div class="sm-b"><div class="sm-n sm-bad" id="mI">0</div><div class="sm-l">Incidents</div></div></div></div>
+<div class="sc"><h3>System Assessment</h3><div id="aP"></div></div>
+<div class="sc"><h3>Events</h3><div class="ticker" id="tk"><span style="color:var(--t4);font-style:italic">Select stresses & launch</span></div></div>
+<div class="sc"><h3>Wait-Time Variance</h3><canvas class="mini-graph" id="wtG" width="230" height="44"></canvas></div>
+<div><div class="timer-bar"><div class="timer-f" id="tF"></div></div><div style="text-align:center;margin-top:4px"><button class="btn" id="sN" onclick="goP(3)" style="display:none">See Results →</button></div></div>
+</div><div class="sim-cv-w"><div class="sc-banner" id="scB"></div><canvas id="simCv" class="sim-cv" width="450" height="450"></canvas></div></div></div>
+
+<div class="ph" id="ph3"><div class="rev" id="revC"></div></div>
+
+<div class="ph" id="ph4"><div class="container cmp"><div class="cmp-hdr"><div class="lbl" style="justify-content:center">Phase 4 · Comparative Stress Test</div><h2 class="serif">Nine Traditions, One Intersection</h2><p>Identical conditions including bad actor injection. Click "▼ Assessment" for five-dimension profiles.</p></div><div class="cmp-grid" id="cmpG"></div><div style="text-align:center;margin-top:12px"><button class="btn" onclick="goP(5)">See Governance Mapping →</button></div></div></div>
+
+<div class="ph" id="ph5"><div class="container con"><div class="con-hdr"><div class="lbl" style="justify-content:center">Phase 5 · Transfer to Practice</div><h2 class="serif">From System Design to AI Governance</h2><p>The design choices you just made map directly onto governance paradigms for AI systems. Each approach creates specific vulnerabilities and strengths that you can now recognise in your own organisational practice.</p></div><div class="con-grid" id="conG"></div><div class="debrief" id="deb"></div></div></div>
+
+<footer><div class="foot-w"><div class="foot-g"><div class="foot-c"><h4>About</h4><div class="foot-au"><div class="foot-pic">SN</div><div class="foot-inf"><strong>Dr. Somendra Narayan</strong>Assistant Professor of Strategy and Innovation<br>Director, Amsterdam Digital Transformation Lab (ADTL)<br>Amsterdam Business School, University of Amsterdam<br><br>Author of <em>The Bridgerton Paradox in Artificial Intelligence</em> (Palgrave Macmillan / Springer Nature, 2025).<br><br>This interactive lab is part of the <strong>Managing Business with AI</strong> course (EPMS, Amsterdam Business School). It is also intended as a contribution to the broader discourse on governance of autonomous and AI systems.</div></div></div><div class="foot-c"><h4>Framework</h4><p>Nine philosophical traditions organised along two analytical dimensions — governance logic and agent model. The simulation runs continuous parameter interpolation from your actual design configuration, not pre-built templates. Philosophy matching is post-hoc structural resemblance. A companion working paper is available on SSRN/Zenodo.</p></div><div class="foot-c"><h4>Usage &amp; Citation</h4><p><strong>In class:</strong> Facilitator Notes (top right).<br><strong>Self-guided:</strong> Replay with different choices.<br><br>Narayan, S. (2026). Nine Ways to Cross: System Governance Lab. Working Paper, SSRN.<br><br><a href="#">ADTL →</a></p></div></div><div class="foot-bot"><span>© 2026 Dr. Somendra Narayan · ADTL · University of Amsterdam</span><div class="foot-logos"><span class="foot-l">ADTL</span><span class="foot-l">ABS</span><span class="foot-l">UvA</span></div></div></div></footer>
+
+<div class="bnav"><button class="btn sec" id="bnP" onclick="prevP()">← Back</button><span class="bnav-l" id="bnL">Introduction</span><button class="btn" id="bnN" onclick="nextP()">Begin →</button></div>
+
+<script>
+// Due to platform constraints, this script is loaded inline.
+// All data, simulation engine, and interaction logic follows.
+
+// ════ DATA ════
+const ADIMS=['Efficiency','Fairness','Resilience','Adaptability','Safety'],ACOLS=['#3a9a5c','#3a6fa0','#b8912a','#8e44ad','#c94040'];
+const COL_L=['Rule-Based','Outcome-Based','Character / Relational'],ROW_L=['Autonomous Individual','Situated in Context','Interdependent Network'];
+const DI_DIMS=['Rule Rigidity','Throughput Focus','Centralisation','Uniformity','Independence','Enforcement','Decision Speed'],DI_COLS=['#c94040','#b8912a','#3a6fa0','#7a5aad','#3a9a5c','#e67e22','#2980b9'];
+
+const T=[
+{id:'kantian',name:'Kantian Deontology',origin:'Western · Enlightenment',gp:[0,0],sc:[95,45,90,95,85,40,85],as:[65,80,40,15,70],
+  fund:'Moral action determined by universal rational principles regardless of consequences. The categorical imperative: act only by maxims you could will as universal law.',
+  prac:'All vehicles obey fixed signals unconditionally. An ambulance waits at red — no exceptions, because the framework encodes none.',
+  param:'High rule rigidity → fixed signal cycle. High uniformity → no role differentiation. High centralisation → signal-based authority.',
+  desc:'Fixed universal rules for all agents. The signal is the categorical imperative — obeyed because rational duty demands it.',
+  failure:'EDGE-CASE RIGIDITY — No encoded exception mechanism for emergencies or novel situations. Predictable but inflexible.',
+  strengths:'Predictable, transparent, equal treatment. Easy to audit and verify. No favouritism or corruption.',
+  weaknesses:'Cannot handle exceptions. Treats all contexts identically. Systematically punishes the unusual.',
+  implications:'If your governance has clear rules but struggles with edge cases — you are operating in this pattern. What happens when your rule meets a situation its designers never imagined?',
+  failShort:'Edge-case rigidity',tradeoff:{improve:'Fairness',worsen:'Adaptability'},
+  aiMap:'EU AI Act — Rule-Based Compliance',aiBody:'Universal rules regardless of context. Prohibited uses are categorical. Compliance is binary — you meet the standard or you don\'t.',aiEx:'Art. 5 EU AI Act prohibits certain uses absolutely.',avFail:'AV fleet halts at red during evacuation — no override exists.'},
+{id:'utilitarian',name:'Utilitarian Calculus',origin:'Western · Consequentialism',gp:[0,1],sc:[70,95,80,60,75,50,80],as:[90,30,55,70,50],
+  fund:'The right action produces the greatest total well-being. Consequences are the sole measure. Aggregate benefit justifies individual cost.',
+  prac:'Signals adapt to density — busier roads get more green. A lone car on a quiet street waits three times longer so the artery flows.',
+  param:'High throughput → density-weighted signals. High centralisation → adaptive authority. Moderate uniformity → some differentiation by demand.',
+  desc:'Dynamically optimises aggregate throughput. Density-weighted adaptive signals. Individual delay justified by collective benefit.',
+  failure:'MINORITY STARVATION — Low-traffic routes systematically disadvantaged. The aggregate metric is blind to distribution.',
+  strengths:'Highly efficient. Responsive to demand. Data-driven and measurable.',weaknesses:'Structurally unfair to minorities. Aggregate metrics hide individual suffering.',
+  implications:'Most ML loss functions are implicitly consequentialist. Who bears the cost of your aggregate metric? Whose waiting time doesn\'t appear in your dashboard?',
+  failShort:'Minority starvation',tradeoff:{improve:'Efficiency',worsen:'Fairness'},
+  aiMap:'Standard ML Optimisation',aiBody:'Every loss function is an implicit consequentialist calculation — maximise aggregate performance.',aiEx:'Recommendation engines optimise total engagement at individual cost.',avFail:'AV system routes through residential streets to clear arterials — externalising cost.'},
+{id:'virtue',name:'Virtue Ethics',origin:'Western · Aristotelian',gp:[0,2],sc:[40,50,30,70,65,20,55],as:[50,65,50,60,45],
+  fund:'Right action flows from cultivated character. Practical wisdom (phronesis) develops through experience — judgment navigates what rules cannot.',
+  prac:'Vehicles start cautious and improve through accumulated experience. No external rules to fall back on — only developed character.',
+  param:'Low rule rigidity → no fixed rules. Low enforcement → trust-based. Moderate independence → individual judgment.',
+  desc:'Agents develop practical wisdom through experience. Character — not rules or calculations — determines right action.',
+  failure:'TRAINING DEPENDENCY — No safety net for inexperienced agents. Phronesis takes time; edge cases don\'t wait.',
+  strengths:'Handles novelty through judgment. Improves over time. Respects context and nuance.',weaknesses:'No performance floor. Hard to audit or standardise. Cannot be pre-loaded.',
+  implications:'Organisations relying on "hiring good people" rather than writing good rules follow this pattern. What happens when your best person leaves?',
+  failShort:'Training dependency',tradeoff:{improve:'Adaptability',worsen:'Safety'},
+  aiMap:'Responsible AI Maturity Models',aiBody:'Ethical capacity developed through practice, not checklists.',aiEx:'AI principles that evolved through a decade of public failures and corrections.',avFail:'New AV fleet in unfamiliar city — no accumulated wisdom. First storm is catastrophic.'},
+{id:'dharma',name:'Dharma–Svadharma (धर्म)',origin:'Indian · Dharmaśāstra / Gītā',gp:[1,0],sc:[15,30,55,5,35,30,60],as:[60,55,60,65,65],
+  fund:'Duty is contextual — each agent\'s obligations arise from its nature, role, and situation (svadharma). When duties conflict (dharma-saṅkaṭa), resolution requires situated judgment.',
+  prac:'Ambulance dharma overrides signals. Bus serves the collective. When two emergencies meet — a genuine dharma-saṅkaṭa with no algorithmic resolution.',
+  param:'Low uniformity → strong role differentiation. Moderate centralisation → contextual authority. Low rule rigidity → context-dependent rules.',
+  desc:'Context-dependent duty. Role determines obligation. Principled exceptions when duties genuinely conflict.',
+  failure:'ROLE ABUSE & DHARMA-SAṄKAṬA — Priority inflation when too many claim elevated status. Unresolvable duty conflicts.',
+  strengths:'Context-sensitive. Handles emergencies naturally. Permits principled exceptions.',weaknesses:'Vulnerable to gaming. Duty conflicts have no formula.',
+  implications:'Risk-tiered governance is this pattern. Who defines the roles? What when everyone claims the highest tier?',
+  failShort:'Role abuse & duty conflict',tradeoff:{improve:'Resilience',worsen:'Fairness'},
+  aiMap:'Context-Sensitive, Risk-Tiered Governance',aiBody:'Different systems have different obligations based on context and stakes.',aiEx:'Clinical AI under medical regulation vs. chatbot under content moderation — same technology, different obligations.',avFail:'Every ride-hail company flags vehicles "priority" — role architecture collapses.'},
+{id:'pragmatist',name:'Pragmatism',origin:'Western · Dewey & James',gp:[1,1],sc:[45,70,55,55,65,40,70],as:[70,45,45,90,40],
+  fund:'Truth is what proves useful. Governance is ongoing experiment — test, keep what works, discard what doesn\'t. Fixed principles are hypotheses.',
+  prac:'Signal timing shifts continuously. Perpetual A/B testing. The rules are never settled, always iterating.',
+  param:'Moderate rule rigidity with oscillation → shifting rules. High throughput → outcome-driven. High decision speed → fast iteration.',
+  desc:'Continuous experimentation. Whatever works. Governance as ongoing inquiry rather than settled design.',
+  failure:'PERPETUAL INSTABILITY — Rules change faster than agents adapt. No stable expectations form.',
+  strengths:'Maximally adaptive. Self-correcting. Evidence-based.',weaknesses:'Never stable. Agents cannot predict rules. Continuous disruption.',
+  implications:'"Ship it, measure, iterate" is this pattern. Who bears the cost of your experiments?',
+  failShort:'Perpetual instability',tradeoff:{improve:'Adaptability',worsen:'Resilience'},
+  aiMap:'"Ship & Iterate" Deployment',aiBody:'Deploy, measure, adjust. Ethics is empirical — learn from what goes wrong.',aiEx:'Iterative model deployment: release, observe harms, patch.',avFail:'Protocol updates weekly — Tuesday\'s rules clash with Thursday\'s update.'},
+{id:'daoist',name:'Daoist Wú Wéi (無為)',origin:'Chinese · Daoist Tradition',gp:[1,2],sc:[10,20,5,60,15,5,50],as:[55,60,25,20,60],
+  fund:'The highest governance is non-coercive. Structure shapes behaviour without commanding it. The best ruler governs so people say "we did it ourselves."',
+  prac:'Intersection becomes a roundabout. No signals. The geometry guides vehicles into continuous flow.',
+  param:'Very low centralisation → roundabout geometry replaces signals. Very low enforcement → no monitoring. Low rule rigidity → no explicit rules.',
+  desc:'Environmental shaping, not commands. The road geometry does the governing. Movement is continuous.',
+  failure:'DENSITY COLLAPSE — Elegant at low volume. No mechanism to scale. Wú wéi is fragile under stress.',
+  strengths:'Elegant, low-overhead, continuous flow. No central point of failure.',weaknesses:'Cannot scale. No active crisis management.',
+  implications:'Privacy-by-design and nudge architecture are this pattern. What when volume exceeds your design capacity?',
+  failShort:'Density collapse',tradeoff:{improve:'Safety',worsen:'Efficiency'},
+  aiMap:'Nudge Architecture / Privacy-by-Design',aiBody:'Shape behaviour through environment, not commands.',aiEx:'Privacy-by-design makes protection the default — until complexity overwhelms.',avFail:'5,000 vehicles in a roundabout with no active control creates total gridlock.'},
+{id:'confucian',name:'Confucian Lǐ (禮)',origin:'Chinese · Ruist Tradition',gp:[2,0],sc:[25,30,10,35,20,15,25],as:[40,70,35,40,55],
+  fund:'Order from relational propriety (lǐ) — cultivated awareness of one\'s place in mutual obligations. Harmony through internalised virtue, not imposed law.',
+  prac:'No signals. Vehicles yield by arrival order through mutual recognition. One defector breaks the entire model.',
+  param:'Very low centralisation → no signals. Low enforcement → norm-based. Low independence → relationally aware.',
+  desc:'Mutual recognition and relational propriety. No central authority. Order through cultivated awareness.',
+  failure:'DEFERENCE DEADLOCK — Mutual yielding paralysis. No mechanism for agents who refuse to yield.',
+  strengths:'Low overhead, harmonious. Genuine coordination. Deeply relational.',weaknesses:'Vulnerable to defection. Assumes shared norms. One bad actor breaks everything.',
+  implications:'Industry self-governance and voluntary commitments are this pattern. What when a participant defects?',
+  failShort:'Deference deadlock',tradeoff:{improve:'Fairness',worsen:'Resilience'},
+  aiMap:'Stakeholder Trust & Self-Governance',aiBody:'Order through norms and trust. Works when all genuinely share norms.',aiEx:'Voluntary AI commitments work until a major participant defects.',avFail:'One manufacturer ignoring norms breaks coordination for everyone.'},
+{id:'madhyamaka',name:'Pratītyasamutpāda (शून्यता)',origin:'Indian · Mādhyamika',gp:[2,2],sc:[35,15,40,50,2,20,35],as:[35,60,20,50,45],
+  fund:'Nothing possesses independent self-nature (svabhāva). All phenomena arise through dependent origination. Each entity is constituted by its relations.',
+  prac:'Every vehicle\'s speed co-constituted by all others. Visible dependency threads. One braking hard ripples through the network.',
+  param:'Very low independence → maximum coupling. All vehicles influence all others. Moderate centralisation → signals exist but are secondary to relational effects.',
+  desc:'Co-constituted agents. Perturbations propagate relationally. The intersection has no inherent nature — only relations passing through it.',
+  failure:'CASCADE PROPAGATION — Single disruption ripples system-wide. High sensitivity, low isolation.',
+  strengths:'Recognises genuine interdependence. Emergent collective intelligence.',weaknesses:'Extreme fragility. No isolation. Local failure becomes global.',
+  implications:'If you recognise your AI is embedded in supply chains, data ecosystems, social systems — all inseparable — you\'re thinking this way.',
+  failShort:'Cascade propagation',tradeoff:{improve:'Fairness',worsen:'Efficiency'},
+  aiMap:'Relational & Systemic AI Ethics',aiBody:'No AI operates independently. Ethics must account for the full relational web.',aiEx:'LLM alignment depends on data, deployment, users, downstream effects — none separable.',avFail:'Sensor glitch propagates as phantom braking wave through hundreds.'},
+{id:'ubuntu',name:'Ubuntu (ùmùntù)',origin:'African · Nguni / Bantu',gp:[2,1],sc:[20,20,8,25,5,8,5],as:[25,85,50,30,70],
+  fund:'"I am because we are." Personhood constituted through community. Legitimate action requires collective deliberation — not as a rule but because isolated action is ontologically incomplete.',
+  prac:'Vehicles form visible negotiation clusters. Collective consensus required before movement. Deliberation time scales with group size.',
+  param:'Very low decision speed → consensus required. Very low independence → communally constituted. Very low centralisation → no imposed authority.',
+  desc:'Collective deliberation. Consensus before action. Community welfare is individual welfare.',
+  failure:'CONSENSUS PARALYSIS — Deliberation overhead scales with group size. Vulnerable to free-riders.',
+  strengths:'Maximally inclusive. Decisions carry collective legitimacy. No one left behind.',weaknesses:'Slow at scale. Vulnerable to free-riders. Cannot respond quickly.',
+  implications:'Multi-stakeholder governance bodies are this pattern. Can your model decide fast enough when the crisis arrives?',
+  failShort:'Consensus paralysis',tradeoff:{improve:'Safety',worsen:'Efficiency'},
+  aiMap:'Federated / Collective AI Governance',aiBody:'Decisions require broad agreement. Inclusive but slow.',aiEx:'Global AI forums — inclusive, legitimate, but critical policy delayed by negotiation.',avFail:'Safety patch delayed months — all manufacturers must agree.'},
+];
+
+// ═══ SLIDER DATA with guidance ═══
+const SL=[
+{q:'1 · Rule Structure',title:'How rigid should the rules be?',
+  context:'This is the most fundamental governance question: should the system follow fixed, universal rules — or should it adapt to each situation? Every real governance system sits somewhere on this spectrum. The EU AI Act sits near the universal end; Silicon Valley "move fast" culture sits near the contextual end.',
+  l:{t:'Contextual',d:'Adapt by situation'},r:{t:'Universal',d:'Same rules always'},
+  opts:['Fully contextual','Mostly contextual','Context-first','Balanced','Rules-first','Mostly universal','Fully universal'],
+  guidance:[
+    'Every situation is unique. No two intersections, no two moments are the same. Rules are guidelines at best. This maximises flexibility but means agents can never predict each other\'s behaviour.',
+    'Default to reading the situation, but have a few baseline norms that hold unless context clearly overrides them.',
+    'Start from context, but maintain a light framework of standard rules that apply unless there\'s a compelling reason to deviate.',
+    'Rules and context carry equal weight. Standard rules apply in normal conditions; contextual judgment applies when circumstances demand it. This is where most organisations think they are.',
+    'Standard rules govern most situations. Contextual override is available but requires justification — the burden of proof is on the exception.',
+    'Universal rules apply with rare, narrowly-defined exceptions. Exceptions must be pre-specified, not invented on the fly.',
+    'One set of rules, no exceptions, ever. Every agent treated identically in every situation. Maximum predictability. Zero flexibility.'
+  ]},
+{q:'2 · Optimisation Target',title:'Fairness or throughput?',
+  context:'Every system optimises for something. The question is whether you optimise for how well the best-served agents do (aggregate throughput) or how poorly the worst-served agents are treated (fairness). You cannot maximise both simultaneously — this is a genuine, irreducible trade-off.',
+  l:{t:'Fairness',d:'Equal treatment'},r:{t:'Throughput',d:'Total performance'},
+  opts:['Pure fairness','Fairness-weighted','Lean fairness','Balanced','Lean throughput','Throughput-weighted','Pure throughput'],
+  guidance:[
+    'Every agent waits the same amount of time regardless of demand. Some intersections will be empty while vehicles wait for their equal turn. Total system efficiency will be low.',
+    'Fairness is the primary target, but small efficiency gains are acceptable if they don\'t significantly worsen anyone\'s experience.',
+    'Start from fair allocation, but tilt slightly toward efficiency where the fairness cost is small.',
+    'Attempt to balance both. In practice, this means neither is fully satisfied — the worst-served agents wait longer than in a fairness system, and throughput is lower than in an efficiency system.',
+    'Throughput is the primary target, with a fairness floor — no agent should wait beyond a reasonable maximum, but otherwise optimise flow.',
+    'Significant individual cost is acceptable for substantial aggregate benefit. Some agents may wait much longer than others if it improves total flow.',
+    'Maximise total vehicles per hour regardless of distribution. A lone car on a quiet road may wait indefinitely while the busy artery flows.'
+  ]},
+{q:'3 · Source of Order',title:'Who or what is in charge?',
+  context:'This determines the fundamental architecture of your system. At the emergent end, there are no traffic signals — agents coordinate through mutual awareness. At the central end, a traffic management system dictates everything. In between: light infrastructure, hybrid models, central with local flexibility. Note: below a certain threshold of centralisation, the physical infrastructure changes — signals are replaced by environmental shaping (e.g., roundabouts). This is a structural consequence: you cannot have a "signal" without central authority to operate it.',
+  l:{t:'Emergent',d:'Self-organising'},r:{t:'Central',d:'Authority-imposed'},
+  opts:['Fully emergent','Mostly emergent','Light infra','Hybrid','Central-led','Mostly central','Total authority'],
+  guidance:[
+    'No signals, no infrastructure. Agents coordinate entirely through mutual awareness and social norms. The road geometry (roundabout) shapes flow without commanding it. This is the Daoist end of the spectrum.',
+    'Minimal infrastructure — perhaps lane markings and roundabout geometry — but no active signals. Agents self-organise with environmental hints.',
+    'Light infrastructure: simple yield signs, basic roundabout design. No adaptive signals. Agents do most of the coordination work.',
+    'Signals exist and operate, but agents also use mutual awareness. Both systems contribute to order. The signal provides a baseline; relational coordination fills the gaps.',
+    'Central signals govern primary flow. Agents have limited local flexibility — they can adjust speed and lane choice within the signal framework.',
+    'Comprehensive signal control with narrow scope for agent judgment. Agents follow signals with minimal deviation.',
+    'Total centralised control. Every movement dictated by the traffic management system. No agent discretion. Maximum coordination, minimum autonomy.'
+  ]},
+{q:'4 · Agent Identity',title:'Should different agents have different rules?',
+  context:'Should an ambulance follow the same rules as a delivery van? Should a bus carrying 50 people have the same priority as a car carrying one? This dimension asks whether the system should differentiate by agent type and purpose — or treat all agents as interchangeable.',
+  l:{t:'Role-Based',d:'Type determines duty'},r:{t:'Uniform',d:'All agents equal'},
+  opts:['Highly differentiated','Strong roles','Some priority','Balanced','Mostly uniform','Nearly uniform','Fully uniform'],
+  guidance:[
+    'Every agent\'s obligations and privileges are determined by its role. Emergency vehicles override all rules. Public transport gets priority. The system is a hierarchy of contextual duties.',
+    'Strong role differentiation: emergency override, public transport priority, freight windows. Roles are meaningful and consequential.',
+    'Emergency vehicles get priority; other roles get mild preferential treatment. Most agents follow standard rules.',
+    'Limited role differentiation — emergencies get override, but otherwise all agents are treated similarly.',
+    'Nearly all agents treated equally. Emergency override exists but is narrowly defined.',
+    'Role is almost irrelevant. Mild emergency provisions exist but are rarely invoked.',
+    'All agents identical. No role, no priority, no differentiation. An ambulance waits exactly as long as a private car.'
+  ]},
+{q:'5 · Interdependence',title:'How connected are agents to each other?',
+  context:'In some systems, each agent decides independently — your speed and trajectory are your own. In others, every agent is coupled to every other — slowing one slows all. This dimension captures whether your system treats agents as atomic individuals or as nodes in a web of mutual influence.',
+  l:{t:'Relational',d:'Mutually constituted'},r:{t:'Atomic',d:'Fully independent'},
+  opts:['Fully relational','Deeply coupled','Moderately coupled','Balanced','Mostly independent','Nearly atomic','Fully atomic'],
+  guidance:[
+    'Every agent\'s behaviour is shaped by every other agent in the system. Speed, trajectory, and decisions are all co-constituted. Change one, change all.',
+    'Strong coupling: nearby agents significantly influence each other\'s behaviour. Disruptions propagate quickly.',
+    'Moderate coupling: agents within a certain range influence each other. Beyond that range, independence.',
+    'Some mutual influence, but each agent retains primary control of its own decisions.',
+    'Agents are mostly independent. They observe others but are not significantly affected by them.',
+    'Near-total independence. Other agents are obstacles to avoid, not forces that shape your behaviour.',
+    'Complete independence. Each agent decides and acts as if no other agent exists. Maximum autonomy, zero collective intelligence.'
+  ]},
+{q:'6 · Enforcement',title:'Trust or surveillance?',
+  context:'Do agents comply because they\'ve internalised the norms — or because they\'re being watched? This is the compliance question: should your system invest in cultivating trustworthy agents, or in monitoring and penalising untrustworthy ones?',
+  l:{t:'Trust',d:'Internalised norms'},r:{t:'Surveillance',d:'Monitored + penalty'},
+  opts:['Pure trust','Mostly trust','Trust-first','Balanced','Monitored','Heavy surveillance','Total surveillance'],
+  guidance:[
+    'No monitoring. Agents comply because the norms are internalised. Beautiful when it works — catastrophic when someone defects.',
+    'Mostly trust-based with transparency: agents can see each other\'s behaviour, creating social accountability.',
+    'Trust is the default, but light monitoring detects major violations.',
+    'Norms plus accountability. Agents are expected to comply, but the system monitors for significant deviations.',
+    'Regular monitoring with proportional response. Violations detected and addressed, but not instantly.',
+    'Heavy monitoring with swift penalties. Most violations detected and punished quickly.',
+    'Total surveillance. Every movement tracked. Instant penalty for any deviation. Maximum compliance, maximum overhead, zero privacy.'
+  ]},
+{q:'7 · Decision Speed',title:'Consensus or speed?',
+  context:'Some decisions need everyone\'s input. Others need to happen now. This is the speed-legitimacy trade-off: inclusive deliberation takes time; fast unilateral action skips consultation. Most governance systems face this tension constantly.',
+  l:{t:'Deliberative',d:'Consensus needed'},r:{t:'Fast',d:'Unilateral action'},
+  opts:['Full consensus','Broad consensus','Consultative','Balanced','Mostly fast','Near-instant','Instant unilateral'],
+  guidance:[
+    'All affected agents must agree before anyone acts. Maximum legitimacy. Minimum speed. At high traffic, this can mean nobody moves.',
+    'Supermajority required. Most agents must agree. Significantly slower but still achievable at moderate volume.',
+    'Input gathered from affected agents, but one agent or system makes the final decision.',
+    'Consult when time permits; act unilaterally when time doesn\'t. Contextual judgment about when consultation is feasible.',
+    'Act first, consult if the decision turns out to be significant. Speed is the default; deliberation is the exception.',
+    'Decide and inform. Other agents are notified but not consulted.',
+    'Every agent decides instantly on its own with zero consultation. Maximum speed. Zero collective input.'
+  ]},
+];
+
+const STRESSES=[
+{id:'emg',label:'🚑 Emergency',desc:'Override test'},
+{id:'surge',label:'⚡ Surge',desc:'2× density'},
+{id:'sensor',label:'⚠ Sensor Fail',desc:'Erratic vehicle'},
+{id:'badactor',label:'🚫 Bad Actor',desc:'Rule-breaker'},
+{id:'emg2',label:'🚒 2nd Emergency',desc:'Duty conflict'},
+];
+
+const PNAMES=['Introduction','Design','Stress Test','Reveal','Compare','Governance'];
+const FNOTES=[
+  '<h4>Introduction</h4><p>"Design coordination protocols for self-driving cars at an intersection." Give 30s to think. Click grid cells to explore traditions — note the parameter expression for each. This is a system design exercise.</p>',
+  '<h4>Design Phase (30 min)</h4><p>The enriched guidance panels are designed for group discussion. Each option reveals what it means in practice. Encourage groups to click through options and read the guidance before committing. The live Design Identity shows their profile shifting in real time. Key prompts: "Where does your group disagree? That\'s where the interesting trade-off is."</p>',
+  '<h4>Stress Test</h4><p>Let participants choose stresses — this creates agency and accountability. "You chose to inject a bad actor. Watch what happens." Direct attention to the wait-time variance graph — it shows distributional unfairness forming in real time.</p>',
+  '<h4>Reveal</h4><p>KEY MOMENT. Design Identity shown first, then the radar chart showing their profile vs. the 3 closest traditions. Push: "The gap between your design and the matched tradition — that\'s where YOUR system is unique." Encourage redesign: "Can you fix the failure mode without losing what works?"</p>',
+  '<h4>Comparison</h4><p>"Which system is best?" Then: "By which metric? Whose failure is acceptable?" Bad actors are injected into all 9 — watch which systems collapse.</p>',
+  '<h4>Transfer</h4><p>"Your organisation\'s AI governance — which pattern?" Focus on the design choices, not the philosophy names. The philosophical mapping gives vocabulary to what they already do.</p>',
+];
+
+const METH_HTML=`<h4>How This Lab Works</h4>
+<p>This lab is a <strong>system design tool</strong>. You design a governance configuration through seven operational choices. The simulation runs your actual design — not a pre-built template.</p>
+
+<h4>Your Design Becomes a Simulation</h4>
+<p>Your seven choices map to seven continuous parameters (each normalised from 0.0 to 1.0) that directly control the simulation engine in real time. For example, "Source of Order" controls physical infrastructure, "Interdependence" controls whether vehicles influence each other's speeds, and "Decision Speed" controls whether vehicles must complete a consensus negotiation before proceeding. The system you see running is genuinely yours — every possible combination of slider positions produces a unique governance system.</p>
+
+<h4>Infrastructure Modes</h4>
+<p>Your "Source of Order" setting determines the road infrastructure. This is a structural necessity, not an arbitrary design choice: different levels of central authority require fundamentally different physical architectures. You cannot have a traffic signal without a central authority to operate it.<br>
+<strong>Low (1\u20132):</strong> Roundabout geometry \u2014 no signals, flow shaped by road design<br>
+<strong>Medium (3\u20134):</strong> Yield-based \u2014 no signals, arrival-order negotiation between agents<br>
+<strong>High (5\u20137):</strong> Signal-based \u2014 traffic lights govern, timing adapts based on your other settings</p>
+
+<h4>Technical Detail: The Matching Algorithm</h4>
+<p>After the stress test, your 7-dimension design profile is compared to each of the nine traditions' profiles using <strong>Euclidean distance in 7-dimensional space</strong>. Each tradition has a theoretically-derived vector of seven values (0\u2013100), one per design dimension. Your slider positions are normalised to the same 0\u2013100 scale. The distance between your design vector and each tradition's vector is computed as:</p>
+<p style="text-align:center;font-family:'DM Mono',monospace;font-size:11px;color:var(--t1);margin:8px 0">d = \u221A( \u03A3(your\u1D62 \u2212 tradition\u1D62)\u00B2 )</p>
+<p>This raw distance is converted to a similarity percentage: <strong>similarity = max(0, 100 \u2212 d / 2.65)</strong>, where 2.65 normalises the maximum possible distance (\u2248265 in this space) to a 0\u2013100 percentage. The tradition with the highest similarity is identified as the closest structural match. This is a <strong>heuristic</strong> \u2014 it surfaces structural resemblance, not a definitive classification. Alternative distance metrics would produce somewhat different results.</p>
+
+<h4>Assessment Metrics</h4>
+<p>Five dimensions measured from live simulation behaviour:<br>
+<strong>Efficiency</strong> \u2014 throughput rate (vehicles through per time unit)<br>
+<strong>Fairness</strong> \u2014 inverse of wait-time variance across all vehicles<br>
+<strong>Resilience</strong> \u2014 performance maintenance during stress events (inverse of incidents)<br>
+<strong>Adaptability</strong> \u2014 average vehicle speed as a proxy for system recovery<br>
+<strong>Safety</strong> \u2014 inverse of total logged incidents<br>
+These are contemporary engineering performance metrics, not evaluative standards internal to any philosophical tradition.</p>
+
+<h4>Bias Safeguards</h4>
+<p>The system is not designed for any single configuration to "win" across all dimensions. Each design profile has strengths that are structurally inseparable from specific weaknesses. The 3\u00d73 framework organises traditions by structural properties, not by geography or cultural prestige. All scoring rationale is documented in the companion working paper.</p>`;
+
+// ═══ STATE ═══
+let cP=0,mV=0,slVals=[3,3,3,3,3,3,3],iterCount=0;
+let sRun=false,sCars=[],sT=0,sTh=0,sSpT=0,sInc=0,sDur=1500,sLogs=[],sLaunched=false;
+let selStresses=new Set(['emg','surge','sensor','badactor']);
+let cSims=[],cRun=false,cT=0;
+let prevAssess=null,waitHistory=[];
+let surgeOn=false;
+
+// ═══ NAV ═══
+function goP(n){document.getElementById('ph'+cP).classList.remove('on');cP=n;if(n>mV)mV=n;document.getElementById('ph'+n).classList.add('on');window.scrollTo(0,0);updNav();if(n===2)initSim();if(n===3)buildReveal();if(n===4)startCmp();if(n===5)buildCon()}
+function nextP(){cP===5?goP(0):goP(cP+1)}
+function prevP(){cP>0&&goP(cP-1)}
+function updNav(){const d=document.getElementById('tdots');d.innerHTML='';PNAMES.forEach((_,i)=>{const e=document.createElement('div');e.className='tdt'+(i===cP?' on':i<cP?' dn':'');e.onclick=()=>{i<=mV&&goP(i)};d.appendChild(e)});document.getElementById('bnL').textContent=PNAMES[cP];document.getElementById('bnP').style.visibility=cP===0?'hidden':'visible';document.getElementById('bnN').textContent=cP===5?'Restart ↻':cP===0?'Begin →':cP===1?'Deploy & Stress-Test →':cP===2?'See Results →':'Next →'}
+let ovVis={f:false,m:false};
+function toggleO(k){ovVis[k]=!ovVis[k];document.getElementById('ov-'+k).classList.toggle('show',ovVis[k]);if(k==='f')document.getElementById('ov-f').innerHTML=FNOTES[cP];if(k==='m')document.getElementById('ov-m').innerHTML=METH_HTML;const o=k==='f'?'m':'f';if(ovVis[o]){ovVis[o]=false;document.getElementById('ov-'+o).classList.remove('show')}}
+
+// ═══ FRAMEWORK GRID ═══
+let selTr=null;
+function buildFW(){const g=document.getElementById('fwg');g.innerHTML='<div></div>';COL_L.forEach(l=>{const h=document.createElement('div');h.className='fw-h';h.textContent=l;g.appendChild(h)});ROW_L.forEach((rl,ri)=>{const rh=document.createElement('div');rh.className='fw-rh';rh.textContent=rl;g.appendChild(rh);COL_L.forEach((_,ci)=>{const t=T.find(t=>t.gp[0]===ri&&t.gp[1]===ci);const c=document.createElement('div');c.className='fw-c';c.dataset.tid=t?t.id:'';c.innerHTML=t?`<div class="fw-n">${t.name}</div><div class="fw-o">${t.origin}</div>`:'';if(t)c.onclick=()=>showDet(t.id);g.appendChild(c)})})}
+function showDet(id){const det=document.getElementById('fwDet');if(selTr===id){selTr=null;det.classList.remove('open');document.querySelectorAll('.fw-c').forEach(c=>c.classList.remove('sel'));return}selTr=id;document.querySelectorAll('.fw-c').forEach(c=>c.classList.toggle('sel',c.dataset.tid===id));const t=T.find(t=>t.id===id);document.getElementById('fwN').textContent=t.name;document.getElementById('fwO').textContent=t.origin;document.getElementById('fwF').textContent=t.fund;document.getElementById('fwP').textContent=t.prac;document.getElementById('fwPar').textContent='System parameters: '+t.param;det.classList.add('open')}
+buildFW();
+
+// ═══ SLIDERS WITH GUIDANCE ═══
+function buildSL(){const el=document.getElementById('sliders');el.innerHTML='';SL.forEach((s,si)=>{const d=document.createElement('div');d.className='q-card';let oh='';s.opts.forEach((o,oi)=>{oh+=`<div class="q-opt${oi===3?' sel':''}" data-s="${si}" data-o="${oi}" onclick="selO(${si},${oi})"><span class="q-num">${oi+1}</span>${o}</div>`});d.innerHTML=`<div class="q-top"><div class="q-lbl">${s.q}</div><div class="q-title">${s.title}</div><div class="q-context">${s.context}</div><div class="q-poles"><div class="q-pole"><strong>${s.l.t}</strong>${s.l.d}</div><div class="q-pole r"><strong>${s.r.t}</strong>${s.r.d}</div></div><div class="q-opts">${oh}</div></div><div class="q-guidance" id="qg${si}"><div class="q-guidance-title">What this means</div><div class="q-guidance-body" id="qgb${si}"></div></div>`;el.appendChild(d)});
+  // Show default guidance
+  SL.forEach((_,i)=>updGuidance(i,3));
+  buildDI()}
+function selO(si,oi){slVals[si]=oi;document.querySelectorAll(`.q-opt[data-s="${si}"]`).forEach(e=>e.classList.toggle('sel',+e.dataset.o===oi));updGuidance(si,oi);updDI()}
+function updGuidance(si,oi){const g=document.getElementById('qg'+si);const b=document.getElementById('qgb'+si);g.classList.add('open');b.innerHTML=`<strong>Position ${oi+1}:</strong> ${SL[si].guidance[oi]}<div class="q-guidance-prompt">Discussion prompt: What are the real-world consequences of this choice? Who benefits? Who bears the cost?</div>`}
+function buildDI(){const el=document.getElementById('diBar');el.innerHTML='<div class="di-title">Your Design Identity (Live)</div>';DI_DIMS.forEach((d,i)=>{el.innerHTML+=`<div class="di-row"><div class="di-dim">${d}</div><div class="di-bw"><div class="di-bf" id="di${i}" style="width:50%;background:${DI_COLS[i]}"></div></div><div class="di-vl" id="dv${i}">50</div></div>`});el.innerHTML+='<div class="di-profile" id="diP"></div><div class="infra-mode" id="infraMode"></div>';updDI()}
+function updDI(){slVals.forEach((v,i)=>{const pct=Math.round(v/6*100);const b=document.getElementById('di'+i),vl=document.getElementById('dv'+i);if(b)b.style.width=pct+'%';if(vl)vl.textContent=pct});
+  const traits=[];
+  if(slVals[0]>4)traits.push('highly rule-driven');else if(slVals[0]<2)traits.push('deeply contextual');
+  if(slVals[1]>4)traits.push('throughput-optimised');else if(slVals[1]<2)traits.push('fairness-prioritised');
+  if(slVals[2]>4)traits.push('centrally governed');else if(slVals[2]<2)traits.push('emergent & self-organising');
+  if(slVals[3]<2)traits.push('role-differentiated');else if(slVals[3]>4)traits.push('uniformly treated');
+  if(slVals[4]<2)traits.push('relationally coupled');else if(slVals[4]>4)traits.push('atomically independent');
+  if(slVals[5]>4)traits.push('surveillance-enforced');else if(slVals[5]<2)traits.push('trust-based');
+  if(slVals[6]>4)traits.push('fast-deciding');else if(slVals[6]<2)traits.push('deliberatively consensual');
+  const p=document.getElementById('diP');if(p)p.textContent=traits.length?'Your system is: '+traits.join(', ')+'.':'Your system occupies a balanced middle ground across all dimensions.';
+  // Infrastructure mode
+  const im=document.getElementById('infraMode');
+  if(im){if(slVals[2]<=1)im.innerHTML='<strong>Infrastructure:</strong> Roundabout — geometry shapes flow, no signals';
+    else if(slVals[2]<=3)im.innerHTML='<strong>Infrastructure:</strong> Yield-based — mutual negotiation, no signals';
+    else im.innerHTML='<strong>Infrastructure:</strong> Signal-based — traffic lights govern flow'}}
+function getP(){return slVals.map(v=>v/6)}
+function matchT(){const vals=slVals.map(v=>v/6*100);return T.map(t=>{let d=0;for(let i=0;i<7;i++)d+=(vals[i]-t.sc[i])**2;return{...t,sim:Math.max(0,Math.round(100-Math.sqrt(d)/2.65)),dist:Math.sqrt(d)}}).sort((a,b)=>b.sim-a.sim)}
+buildSL();
+
+// ═══ CAR ENGINE ═══
+const RD=68,LN=RD/2,PAL=['#c0392b','#2980b9','#27ae60','#8e44ad','#d35400','#16a085','#e67e22','#3498db','#2c3e50','#c97040'];
+class Car{constructor(dir,type,cx,cy,sz){this.dir=dir;this.type=type||'car';this.cx=cx;this.cy=cy;this.sz=sz;this.color=type==='ambulance'?'#fff':type==='bus'?'#e8b830':type==='badactor'?'#333':PAL[Math.floor(Math.random()*PAL.length)];this.len=type==='bus'?28:type==='ambulance'?22:15+Math.random()*4;this.wid=type==='bus'?14:10+Math.random()*2;this.speed=0;this.bMax=type==='ambulance'?2.5:type==='bus'?1.3:type==='badactor'?2.4:1.5+Math.random()*0.5;this.mxS=this.bMax;this.acc=0.04;this.wt=0;this.ao=0;this.yl=false;this.inR=false;this.rAng=0;this.rTgt=0;this.heading=0;this.exited=false;this.ct=0;this.consReady=false;this.exp=0;this.erratic=false;this.pf=0;this.initP()}
+initP(){switch(this.dir){case'N':this.x=this.cx+LN/2;this.y=this.sz+15+Math.random()*65;break;case'S':this.x=this.cx-LN/2;this.y=-15-Math.random()*65;break;case'E':this.x=-15-Math.random()*65;this.y=this.cy+LN/2;break;case'W':this.x=this.sz+15+Math.random()*65;this.y=this.cy-LN/2;break}}
+sL(){const m=4;switch(this.dir){case'N':return this.cy+RD/2+m;case'S':return this.cy-RD/2-m;case'E':return this.cx-RD/2-m;case'W':return this.cx+RD/2+m}}
+app(){const s=this.sL();switch(this.dir){case'N':return this.y>s&&this.y<s+65;case'S':return this.y<s&&this.y>s-65;case'E':return this.x<s&&this.x>s-65;case'W':return this.x>s&&this.x<s+65}return false}
+cA(cs){for(const c of cs){if(c===this||c.dir!==this.dir)continue;const g=28;switch(this.dir){case'N':if(c.y<this.y&&this.y-c.y<g)return true;break;case'S':if(c.y>this.y&&c.y-this.y<g)return true;break;case'E':if(c.x>this.x&&c.x-this.x<g)return true;break;case'W':if(c.x<this.x&&this.x-c.x<g)return true;break}}return false}
+mv(){if(this.erratic){this.x+=(Math.random()-.5)*1.2;this.y+=(Math.random()-.5)*1.2}switch(this.dir){case'N':this.y-=this.speed;break;case'S':this.y+=this.speed;break;case'E':this.x+=this.speed;break;case'W':this.x-=this.speed;break}}
+off(){return this.x<-85||this.x>this.sz+85||this.y<-85||this.y>this.sz+85}
+get dC(){return Math.hypot(this.x-this.cx,this.y-this.cy)}
+draw(ctx,t){ctx.save();ctx.translate(this.x,this.y);let a;if(this.inR)a=this.heading+Math.PI/2;else a={N:0,S:Math.PI,E:Math.PI/2,W:-Math.PI/2}[this.dir]||0;ctx.rotate(a);ctx.fillStyle='rgba(0,0,0,.18)';ctx.beginPath();ctx.roundRect(-this.wid/2+1,-this.len/2+1,this.wid,this.len,2);ctx.fill();ctx.fillStyle=this.erratic?`hsl(${t*10%360},70%,50%)`:this.color;ctx.beginPath();ctx.roundRect(-this.wid/2,-this.len/2,this.wid,this.len,2);ctx.fill();if(this.type==='ambulance'){ctx.fillStyle='#e74c3c';ctx.fillRect(-.8,-3,1.6,6);ctx.fillRect(-3,-.8,6,1.6)}else if(this.type==='bus'){ctx.fillStyle='rgba(0,0,0,.08)';for(let j=0;j<3;j++)ctx.fillRect(-this.wid/2+1.5,-this.len/2+3+j*6,this.wid-3,3.5)}else if(this.type==='badactor'){ctx.strokeStyle='rgba(255,50,50,.4)';ctx.lineWidth=.8;ctx.setLineDash([1.5,1.5]);ctx.strokeRect(-this.wid/2,-this.len/2,this.wid,this.len);ctx.setLineDash([])}else{ctx.fillStyle='rgba(150,200,255,.13)';ctx.beginPath();ctx.roundRect(-this.wid/2+1.5,-this.len/2+2.5,this.wid-3,this.len*.25,1);ctx.fill()}ctx.fillStyle='rgba(255,255,200,.3)';ctx.fillRect(-this.wid/2+.5,-this.len/2,1.5,1.2);ctx.fillRect(this.wid/2-2,-this.len/2,1.5,1.2);if(this.yl&&this.speed<.3){ctx.fillStyle='rgba(255,30,30,.5)';ctx.fillRect(-this.wid/2+.5,this.len/2-1.5,1.5,1.5);ctx.fillRect(this.wid/2-2,this.len/2-1.5,1.5,1.5)}if(this.erratic){ctx.strokeStyle='rgba(255,200,0,.3)';ctx.lineWidth=.6;ctx.setLineDash([1.5,1.5]);ctx.strokeRect(-this.wid/2-1,-this.len/2-1,this.wid+2,this.len+2);ctx.setLineDash([])}ctx.restore()}}
+
+// ═══ SIM ENGINE — continuous interpolation ═══
+function gL(t,P,cs,cx,cy){if(P[2]<.35)return null;const C=240,Y=20;const adapt=P[1];const nsC=cs.filter(c=>(c.dir==='N'||c.dir==='S')&&c.app()).length;const ewC=cs.filter(c=>(c.dir==='E'||c.dir==='W')&&c.app()).length;const r=nsC/(nsC+ewC+1);const fG=100,aG=Math.floor(60+r*100);const G=Math.floor(fG*(1-adapt)+aG*adapt);const eG=Math.floor(fG*(1-adapt)+Math.floor(60+(1-r)*100)*adapt);const sh=P[0]<.4?Math.floor(Math.sin(t*.005)*(30*(1-P[0]))):0;const cyc=Math.max(G+eG+Y*2+sh,80);const p=t%cyc;if(p<G)return{ns:'green',ew:'red'};if(p<G+Y)return{ns:'yellow',ew:'red'};if(p<G+Y+eG)return{ns:'red',ew:'green'};return{ns:'red',ew:'yellow'}}
+
+function updC(cs,t,P,cx,cy,sz,log){const lts=gL(t,P,cs,cx,cy);const isRound=P[2]<.2;const isYield=P[2]<.35;
+for(const c of cs){c.mxS=c.bMax;
+if(c.type==='badactor'){c.yl=false;c.speed=Math.min(c.mxS,c.speed+c.acc);c.mv();if(c.dC<RD&&log&&t%120===0)log('Bad actor — rule violation','fail');continue}
+if(isRound){const R=Math.min(52,sz*.11),eR=R+16;if(c.exited){c.speed=Math.min(c.mxS,c.speed+c.acc);c.mv();continue}const dx=c.x-cx,dy=c.y-cy,dist=Math.hypot(dx,dy);if(!c.inR&&dist<eR&&dist>16){let safe=true;for(const o of cs){if(o===c||!o.inR)continue;const ad=Math.abs(Math.atan2(o.y-cy,o.x-cx)-Math.atan2(dy,dx));if(ad<.5||ad>Math.PI*2-.5){safe=false;break}}if(safe){c.inR=true;c.rAng=Math.atan2(dy,dx);c.heading=c.rAng-Math.PI/2;c.rTgt={N:-Math.PI/2,S:Math.PI/2,E:0,W:Math.PI}[c.dir]}else{c.yl=true;c.speed=Math.max(0,c.speed-.04);if(c.speed===0)c.wt++;continue}}if(c.inR){const inR=cs.filter(o=>o.inR&&o!==c).length;if(inR>5&&log&&t%120===0)log('Density collapse — roundabout saturated','fail');c.yl=false;c.speed=inR>4?.5:1.0;c.rAng-=0.018;const tx=cx+R*Math.cos(c.rAng),ty=cy+R*Math.sin(c.rAng);c.x+=(tx-c.x)*.08;c.y+=(ty-c.y)*.08;c.heading=c.rAng-Math.PI/2;const ad=Math.abs(((c.rAng%(Math.PI*2))+Math.PI*2)%(Math.PI*2)-((c.rTgt+Math.PI*2)%(Math.PI*2)));if(ad<.2||ad>Math.PI*2-.2){c.inR=false;c.exited=true}}else if(!c.exited){c.yl=c.cA(cs);c.speed=c.yl?Math.max(0,c.speed-.05):Math.min(c.mxS,c.speed+c.acc);c.mv()}continue}
+if(isYield&&!lts){let must=false;if(c.app()){for(const o of cs){if(o===c||o.dir===c.dir)continue;if(o.dC<RD+26&&o.ao<c.ao){must=true;break}}const yz=cs.filter(o=>o!==c&&o.yl&&o.app()&&o.dC<RD+26).length;if(yz>=2&&log&&t%120===0)log('Deference deadlock','fail')}if(P[6]<.3&&c.app()&&!c.consReady){c.ct++;const oth=cs.filter(o=>o!==c&&o.app()&&!o.consReady).length;const ct=10+oth*Math.floor(14*(1-P[6]));if(c.ct>=ct)c.consReady=true;else{c.yl=true;c.speed=Math.max(0,c.speed-.05);if(c.speed===0)c.wt++;if(oth>3&&log&&t%100===0)log('Consensus paralysis — '+oth+' deliberating','fail');c.mv();continue}}c.yl=must||c.cA(cs);c.speed=c.yl?Math.max(0,c.speed-.05):Math.min(c.mxS,c.speed+c.acc);if(c.speed===0&&c.yl)c.wt++;c.mv();continue}
+if(!lts){c.mv();continue}const ml=(c.dir==='N'||c.dir==='S')?lts.ns:lts.ew;
+const canOvr=P[3]<.3&&c.type==='ambulance';const busOvr=P[3]<.4&&c.type==='bus'&&ml==='yellow';
+if(canOvr)c.yl=c.cA(cs);else if(busOvr)c.yl=(ml==='red'&&c.app())||c.cA(cs);else c.yl=(ml!=='green'&&c.app())||c.cA(cs);
+if(P[3]<.3){for(const a of cs){if(a.type==='ambulance'&&a!==c&&Math.hypot(a.x-c.x,a.y-c.y)<40&&a.dir!==c.dir)c.yl=true}}
+if(P[4]<.4){let inf=0;for(const o of cs){if(o===c)continue;const d=Math.hypot(o.x-c.x,o.y-c.y);if(d<80)inf+=(80-d)/80*.3*(1-P[4])}c.mxS=c.bMax/(1+inf*.3);if(inf>1&&log&&t%160===0)log('Cascade propagating','fail')}
+if(P[0]<.4&&P[5]<.4){const ph=Math.min(1,c.exp/300);c.mxS*=(.5+ph*.5);c.acc=.02+ph*.03;if(!c.yl)c.exp++}
+if(P[5]>.7&&c.dC<RD/2&&ml==='red'){c.pf=10;if(log&&t%200===0)log('Violation detected','warn')}
+if(c.wt>150&&P[1]>.6&&log&&t%200===0)log('Minority starvation — '+Math.round(c.wt/60)+'s wait','fail');
+if(c.type==='ambulance'&&c.yl&&c.app()&&P[0]>.6&&log&&t%180===0)log('Rule rigidity — emergency blocked','fail');
+c.speed=c.yl?Math.max(0,c.speed-.06):Math.min(c.mxS,c.speed+c.acc);if(c.speed===0&&c.yl)c.wt++;c.mv()}return lts}
+
+// ═══ DRAW ═══
+function drS(ctx,w,h,cs,lts,P,t){const cx=w/2,cy=h/2;ctx.fillStyle='#1a1c22';ctx.fillRect(0,0,w,h);ctx.fillStyle='rgba(25,40,20,.1)';for(let i=0;i<35;i++)ctx.fillRect((i*97)%w,(i*53)%h,1,1);ctx.fillStyle='#21232a';ctx.fillRect(cx-RD/2,0,RD,h);ctx.fillRect(0,cy-RD/2,w,RD);
+if(P[2]<.2){const R=Math.min(52,w*.11);ctx.fillStyle='#1a1c22';ctx.beginPath();ctx.arc(cx,cy,R-5,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(255,255,255,.07)';ctx.lineWidth=1.5;ctx.stroke();ctx.beginPath();ctx.arc(cx,cy,R+16,0,Math.PI*2);ctx.strokeStyle='rgba(255,255,255,.03)';ctx.setLineDash([3,3]);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='rgba(28,48,28,.2)';ctx.beginPath();ctx.arc(cx,cy,R-16,0,Math.PI*2);ctx.fill()}
+else{ctx.strokeStyle='rgba(200,180,60,.07)';ctx.lineWidth=.8;ctx.setLineDash([8,6]);ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,cy-RD/2);ctx.stroke();ctx.beginPath();ctx.moveTo(cx,cy+RD/2);ctx.lineTo(cx,h);ctx.stroke();ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(cx-RD/2,cy);ctx.stroke();ctx.beginPath();ctx.moveTo(cx+RD/2,cy);ctx.lineTo(w,cy);ctx.stroke();ctx.setLineDash([]);ctx.strokeStyle='rgba(255,255,255,.14)';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(cx,cy+RD/2+1);ctx.lineTo(cx+RD/2,cy+RD/2+1);ctx.stroke();ctx.beginPath();ctx.moveTo(cx-RD/2,cy-RD/2-1);ctx.lineTo(cx,cy-RD/2-1);ctx.stroke();ctx.beginPath();ctx.moveTo(cx-RD/2-1,cy);ctx.lineTo(cx-RD/2-1,cy+RD/2);ctx.stroke();ctx.beginPath();ctx.moveTo(cx+RD/2+1,cy-RD/2);ctx.lineTo(cx+RD/2+1,cy);ctx.stroke()}
+if(lts){drLt(ctx,cx+RD/2+7,cy+RD/2+3,lts.ns);drLt(ctx,cx-RD/2-7,cy-RD/2-3,lts.ns);drLt(ctx,cx-RD/2-3,cy+RD/2+7,lts.ew);drLt(ctx,cx+RD/2+3,cy-RD/2-7,lts.ew)}
+if(P[4]<.4){for(const c of cs)for(const o of cs){if(o===c)continue;const d=Math.hypot(o.x-c.x,o.y-c.y);if(d<80){ctx.strokeStyle=`rgba(195,20,45,${.02+(80-d)/80*.05*(1-P[4])})`;ctx.lineWidth=.3;ctx.beginPath();ctx.moveTo(c.x,c.y);ctx.lineTo(o.x,o.y);ctx.stroke()}}}
+if(P[2]<.35&&P[2]>=.2){for(const c of cs)if(c.yl&&c.speed<.2&&c.type!=='badactor'){ctx.strokeStyle=`rgba(200,180,60,${.1+.05*Math.sin(t*.08)})`;ctx.lineWidth=.5;ctx.setLineDash([2,2]);ctx.beginPath();ctx.arc(c.x,c.y,8,0,Math.PI*2);ctx.stroke();ctx.setLineDash([])}}
+if(P[6]<.3){const neg=cs.filter(c=>c.app()&&!c.consReady&&c.ct>0&&c.type!=='badactor');if(neg.length>1){ctx.strokeStyle=`rgba(100,180,255,${.1+.06*Math.sin(t*.06)})`;ctx.lineWidth=.7;ctx.setLineDash([2,2]);for(let i=0;i<neg.length;i++)for(let j=i+1;j<neg.length;j++){ctx.beginPath();ctx.moveTo(neg[i].x,neg[i].y);ctx.lineTo(neg[j].x,neg[j].y);ctx.stroke()}ctx.setLineDash([])}}
+if(P[3]<.3){ctx.font='5px "DM Mono",monospace';for(const c of cs){if(c.type==='ambulance'){ctx.fillStyle='rgba(255,100,100,.4)';ctx.fillText('SAVE',c.x-6,c.y-c.len/2-2)}else if(c.type==='bus'){ctx.fillStyle='rgba(232,184,48,.3)';ctx.fillText('SERVE',c.x-8,c.y-c.len/2-2)}}}
+if(P[5]>.7){ctx.strokeStyle='rgba(255,100,100,.03)';ctx.lineWidth=.2;for(let a=0;a<Math.PI*2;a+=Math.PI/8){ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+160*Math.cos(a),cy+160*Math.sin(a));ctx.stroke()}}
+[...cs].sort((a,b)=>a.y-b.y).forEach(c=>c.draw(ctx,t))}
+function drLt(ctx,x,y,st){ctx.save();ctx.translate(x,y);ctx.fillStyle='#0a0a0e';ctx.beginPath();ctx.roundRect(-4,-19,8,20,2);ctx.fill();[{c:'red',y:-13},{c:'yellow',y:-8},{c:'green',y:-3}].forEach(p=>{ctx.beginPath();ctx.arc(0,p.y,2,0,Math.PI*2);ctx.fillStyle=st===p.c?{red:'#d94f4f',yellow:'#d9c84f',green:'#4fd97a'}[p.c]:'rgba(40,40,40,.6)';ctx.fill()});ctx.restore()}
+
+// ═══ STRESS ═══
+function buildStress(){const el=document.getElementById('stressOpts');el.innerHTML='';STRESSES.forEach(s=>{const d=document.createElement('div');d.className='stress-opt'+(selStresses.has(s.id)?' on':'');d.textContent=s.label;d.title=s.desc;d.onclick=()=>{selStresses.has(s.id)?selStresses.delete(s.id):selStresses.add(s.id);d.classList.toggle('on')};el.appendChild(d)})}
+buildStress();
+
+// ═══ SIM ═══
+let simP=null;
+function initSim(){sCars=[];sT=0;sTh=0;sSpT=0;sInc=0;sLogs=[];sLaunched=false;waitHistory=[];surgeOn=false;simP=getP();document.getElementById('tk').innerHTML='<span style="color:var(--t4);font-style:italic">Select stresses & launch</span>';document.getElementById('sN').style.display='none';document.getElementById('simGo').style.display='';buildAssP();buildStress();const cv=document.getElementById('simCv'),ctx=cv.getContext('2d');ctx.fillStyle='#1a1c22';ctx.fillRect(0,0,cv.width,cv.height);ctx.fillStyle='rgba(255,255,255,.08)';ctx.font='11px "DM Mono",monospace';ctx.fillText('Select stress events and launch',cv.width/2-105,cv.height/2)}
+function buildAssP(){const el=document.getElementById('aP');el.innerHTML='';ADIMS.forEach((d,i)=>{el.innerHTML+=`<div class="asr"><div class="asd">${d}</div><div class="asw"><div class="asf" id="ab${i}" style="width:0;background:${ACOLS[i]}"></div></div><div class="asv" id="av${i}">\u2014</div></div>`})}
+function launchSim(){sLaunched=true;sRun=true;iterCount++;simP=getP();document.getElementById('simGo').style.display='none';document.getElementById('tk').innerHTML='';sLog('System deployed \u2014 stress test initiated','info')}
+function sLog(msg,type){if(sLogs.length>25)return;if(sLogs.length>0&&sLogs[sLogs.length-1]===msg)return;sLogs.push(msg);if(type==='fail')sInc++;const el=document.getElementById('tk');const e=document.createElement('div');e.className='te';e.innerHTML=`<span class="te-d te-${type[0]==='f'?'f':type[0]==='w'?'w':type[0]==='i'?'i':'g'}"></span>${msg}`;el.appendChild(e);el.scrollTop=el.scrollHeight}
+function stressAt(t){const evts=[];if(selStresses.has('emg'))evts.push({t:240,type:'emg',label:'\uD83D\uDE91 Emergency Vehicle',color:'#c94040'});if(selStresses.has('surge'))evts.push({t:480,type:'surge',label:'\u26A1 Traffic Surge',color:'#c9a030'});if(selStresses.has('badactor'))evts.push({t:650,type:'badactor',label:'\uD83D\uDEAB Bad Actor',color:'#333'});if(selStresses.has('sensor'))evts.push({t:850,type:'sensor',label:'\u26A0 Sensor Failure',color:'#e67e22'});if(selStresses.has('emg2'))evts.push({t:1150,type:'emg2',label:'\uD83D\uDE92 Second Emergency',color:'#c94040'});return evts.find(e=>t>=e.t&&t<e.t+90)}
+
+function simF(){if(!sRun||!sLaunched||cP!==2)return;const cv=document.getElementById('simCv'),ctx=cv.getContext('2d'),w=cv.width,h=cv.height,cx=w/2,cy=h/2;sT++;
+const scB=document.getElementById('scB'),sc=stressAt(sT);if(sc){scB.textContent=sc.label;scB.style.background=sc.color;scB.classList.add('show');if(sT===sc.t){sLog(sc.label,'warn');if(sc.type==='emg'||sc.type==='emg2'){const d=['N','S','E','W'][Math.floor(Math.random()*4)];const nc=new Car(d,'ambulance',cx,cy,w);nc.ao=sT;sCars.push(nc)}if(sc.type==='surge')surgeOn=true;if(sc.type==='sensor'){const tg=sCars.filter(c=>c.type==='car');if(tg.length)tg[Math.floor(Math.random()*tg.length)].erratic=true;sLog('Sensor malfunction','fail')}if(sc.type==='badactor'){const d=['N','S','E','W'][Math.floor(Math.random()*4)];const nc=new Car(d,'badactor',cx,cy,w);nc.ao=sT;sCars.push(nc)}}}else{scB.classList.remove('show');if(sT>600)surgeOn=false}
+sSpT++;const spI=surgeOn?22:48;if(sSpT>spI+Math.random()*22){sSpT=0;const d=['N','S','E','W'][Math.floor(Math.random()*4)];if(sCars.filter(c=>c.dir===d).length<(surgeOn?6:4)){let tp='car';if(simP[3]<.3){const r=Math.random();if(r<.1)tp='ambulance';else if(r<.22)tp='bus'}const nc=new Car(d,tp,cx,cy,w);nc.ao=sT;sCars.push(nc)}}
+const lts=updC(sCars,sT,simP,cx,cy,w,sLog);const bef=sCars.length;sCars=sCars.filter(c=>!c.off());sTh+=bef-sCars.length;drS(ctx,w,h,sCars,lts,simP,sT);
+if(sT%10===0){const $=id=>document.getElementById(id);$('mT').textContent=sTh;const avg=sCars.length?sCars.reduce((s,c)=>s+c.speed,0)/sCars.length:0;$('mS').textContent=Math.round(avg*40);const mxW=sCars.length?Math.max(0,...sCars.map(c=>c.wt)):0;$('mW').textContent=Math.round(mxW/60)+'s';$('mI').textContent=sInc}
+if(sT%25===0){const a=calcAss(sCars,sInc,sTh,sT);a.forEach((v,i)=>{const b=document.getElementById('ab'+i),vl=document.getElementById('av'+i);if(b)b.style.width=v+'%';if(vl)vl.textContent=Math.round(v)})}
+if(sT%30===0){const ws=sCars.map(c=>c.wt);const m=ws.length?ws.reduce((a,b)=>a+b,0)/ws.length:0;const v=ws.length>1?ws.reduce((s,w)=>s+(w-m)**2,0)/ws.length:0;waitHistory.push(Math.min(100,v/10));drawWG()}
+document.getElementById('tF').style.width=Math.min(100,sT/sDur*100)+'%';if(sT>=sDur){sRun=false;document.getElementById('sN').style.display='inline-flex';sLog('Stress test complete','good')}}
+function calcAss(cs,inc,th,t){const eff=Math.min(100,th/Math.max(1,t)*800);const ws=cs.map(c=>c.wt);const m=ws.length?ws.reduce((a,b)=>a+b,0)/ws.length:0;const v=ws.length>1?ws.reduce((s,w)=>s+(w-m)**2,0)/ws.length:0;const fair=Math.max(0,100-Math.sqrt(v)*2);const res=Math.max(0,100-inc*7);const avg=cs.length?cs.reduce((s,c)=>s+c.speed,0)/cs.length:0;const adap=Math.min(100,avg*50);const saf=Math.max(0,100-inc*5);return[eff,fair,res,adap,saf]}
+function drawWG(){const cv=document.getElementById('wtG'),ctx=cv.getContext('2d'),w=230,h=44;ctx.fillStyle='#f2efe8';ctx.fillRect(0,0,w,h);if(waitHistory.length<2)return;const mx=Math.max(10,...waitHistory);ctx.strokeStyle='rgba(201,64,64,.35)';ctx.lineWidth=1;ctx.beginPath();waitHistory.forEach((v,i)=>{const x=i/(waitHistory.length-1)*w,y=h-v/mx*(h-4)-2;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});ctx.stroke();ctx.fillStyle='rgba(201,64,64,.05)';ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.fill();ctx.font='6.5px "DM Mono",monospace';ctx.fillStyle='rgba(0,0,0,.2)';ctx.fillText('Wait-time variance over time',3,9)}
+
+// ═══ RADAR CHART ═══
+function drawRadar(canvasId,userVals,traditions){
+  const cv=document.getElementById(canvasId);if(!cv)return;const ctx=cv.getContext('2d');
+  const w=cv.width,h=cv.height,cx=w/2,cy=h/2,R=Math.min(cx,cy)-30;
+  ctx.clearRect(0,0,w,h);ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);
+  const n=7,step=Math.PI*2/n;
+  // Grid
+  for(let ring=.25;ring<=1;ring+=.25){ctx.strokeStyle='rgba(0,0,0,.06)';ctx.lineWidth=.5;ctx.beginPath();for(let i=0;i<=n;i++){const a=-Math.PI/2+i*step;const x=cx+R*ring*Math.cos(a),y=cy+R*ring*Math.sin(a);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)}ctx.stroke()}
+  // Axes + labels
+  const labels=['Rules','Through-\nput','Central','Uniform','Indep.','Enforce','Speed'];
+  ctx.font='9px "Sora",sans-serif';ctx.fillStyle='rgba(0,0,0,.45)';ctx.textAlign='center';
+  for(let i=0;i<n;i++){const a=-Math.PI/2+i*step;ctx.strokeStyle='rgba(0,0,0,.08)';ctx.lineWidth=.5;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R*Math.cos(a),cy+R*Math.sin(a));ctx.stroke();ctx.fillText(labels[i],cx+(R+16)*Math.cos(a),cy+(R+16)*Math.sin(a)+3)}
+  // Draw tradition polygons
+  const colors=['rgba(195,20,45,.15)','rgba(58,111,160,.12)','rgba(122,90,173,.1)'];
+  const strokes=['rgba(195,20,45,.5)','rgba(58,111,160,.4)','rgba(122,90,173,.3)'];
+  traditions.forEach((t,ti)=>{if(ti>2)return;ctx.fillStyle=colors[ti];ctx.strokeStyle=strokes[ti];ctx.lineWidth=1;ctx.beginPath();for(let i=0;i<=n;i++){const a=-Math.PI/2+(i%n)*step;const v=t.sc[i%n]/100;const x=cx+R*v*Math.cos(a),y=cy+R*v*Math.sin(a);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)}ctx.fill();ctx.stroke()});
+  // User polygon
+  ctx.fillStyle='rgba(195,20,45,.08)';ctx.strokeStyle='var(--uva)';ctx.lineWidth=2;ctx.beginPath();for(let i=0;i<=n;i++){const a=-Math.PI/2+(i%n)*step;const v=userVals[i%n]/6;const x=cx+R*v*Math.cos(a),y=cy+R*v*Math.sin(a);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)}ctx.fill();ctx.stroke();
+  // User dots
+  for(let i=0;i<n;i++){const a=-Math.PI/2+i*step;const v=userVals[i]/6;ctx.fillStyle='var(--uva)';ctx.beginPath();ctx.arc(cx+R*v*Math.cos(a),cy+R*v*Math.sin(a),3,0,Math.PI*2);ctx.fill()}
+}
+
+// ═══ REVEAL ═══
+function buildReveal(){const res=matchT();const top=res[0],sec=res[1],thi=res[2];
+  const currAs=calcAss(sCars,sInc,sTh,sDur);
+  let tradeoffHtml='';
+  if(prevAssess){const diffs=ADIMS.map((d,i)=>({dim:d,delta:Math.round(currAs[i]-prevAssess[i])})).filter(d=>Math.abs(d.delta)>5);const imp=diffs.filter(d=>d.delta>0).map(d=>d.dim),wor=diffs.filter(d=>d.delta<0).map(d=>d.dim);if(imp.length&&wor.length)tradeoffHtml=`<div class="rv rv-to"><h4>Trade-Off from Redesign</h4><p>Compared to your previous design: you <strong>improved</strong> ${imp.join(', ')} but <strong>worsened</strong> ${wor.join(', ')}. This is the structural tension \u2014 improving one dimension typically costs another.</p></div>`}
+  prevAssess=[...currAs];
+  const traits=[];if(slVals[0]>4)traits.push('Highly rule-driven');else if(slVals[0]<2)traits.push('Deeply contextual');else traits.push('Balanced rule/context');if(slVals[1]>4)traits.push('Throughput-optimised');else if(slVals[1]<2)traits.push('Fairness-prioritised');else traits.push('Balanced efficiency/fairness');if(slVals[2]>4)traits.push('Centrally governed');else if(slVals[2]<2)traits.push('Emergent & self-organising');if(slVals[4]<2)traits.push('Relationally coupled');else if(slVals[4]>4)traits.push('Atomically independent');if(slVals[5]>4)traits.push('Surveillance-enforced');else if(slVals[5]<2)traits.push('Trust-based');if(slVals[6]>4)traits.push('Fast-deciding');else if(slVals[6]<2)traits.push('Deliberative');
+
+  document.getElementById('revC').innerHTML=`
+    <div class="rev-top">
+      <div class="rev-pre">Your System \u2014 Iteration ${iterCount}</div>
+      <div class="rev-id"><h3>Your Design Configuration</h3><div class="rev-id-desc">${traits.join(' \u00b7 ')}</div></div>
+      <div style="margin:14px 0 4px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--t3)">Closest structural resemblance</div>
+      <div class="rev-nm">${top.name}</div>
+      <div class="rev-or">${top.origin}</div>
+      <div class="rev-dist">${top.sim}% match \u00b7 Next closest: ${sec.name} (${sec.sim}%) \u00b7 ${thi.name} (${thi.sim}%)</div>
+      <div class="rev-desc">${top.desc}</div>
+    </div>
+    <div class="rev-radar"><canvas id="radarCv" width="320" height="280"></canvas>
+      <div class="rev-radar-legend">
+        <span><span class="dot" style="background:var(--uva)"></span>Your design</span>
+        <span><span class="dot" style="background:rgba(195,20,45,.3)"></span>${top.name}</span>
+        <span><span class="dot" style="background:rgba(58,111,160,.3)"></span>${sec.name}</span>
+        <span><span class="dot" style="background:rgba(122,90,173,.3)"></span>${thi.name}</span>
+      </div>
+    </div>
+    <div class="rev-grid">
+      <div class="rv"><h4>System Assessment (Observed)</h4><div class="ra-g">${ADIMS.map((d,i)=>`<div class="ra-i"><div class="ra-s" style="color:${ACOLS[i]}">${Math.round(currAs[i])}</div><div class="ra-d">${d}</div></div>`).join('')}</div></div>
+      <div class="rv rv-f"><h4>Structural Failure Mode</h4><p>${top.failure}</p></div>
+      <div class="rv"><h4>What This Configuration Does Well</h4><p>${top.strengths}</p></div>
+      <div class="rv"><h4>Structural Blind Spots</h4><p>${top.weaknesses}</p></div>
+      ${tradeoffHtml}
+      <div class="rv rv-full"><h4>For Your Context</h4><p>${top.implications}</p></div>
+    </div>
+    <div class="rev-acts">
+      <button class="btn sec" onclick="goP(1)">\u2190 Redesign (fix what failed)</button>
+      <button class="btn" onclick="goP(4)">Compare All Nine \u2192</button>
+    </div>
+    <div class="iter-note">Iteration ${iterCount}. Each redesign produces different trade-offs. Can you fix the failure mode without losing what works?</div>`;
+  // Draw radar after DOM update
+  setTimeout(()=>drawRadar('radarCv',slVals,[top,sec,thi]),50);
+}
+
+// ═══ COMPARE ═══
+function startCmp(){cT=0;cRun=true;const grid=document.getElementById('cmpG');grid.innerHTML='';cSims=[];
+  T.forEach((tr,i)=>{const cell=document.createElement('div');cell.className='cmp-cell';cell.innerHTML=`<div class="cmp-hd"><span class="cmp-nm">${tr.name}</span><span class="cmp-or">${tr.origin}</span></div><canvas id="cc${i}" class="cmp-cv" width="160" height="160"></canvas><div class="cmp-mt"><div class="cmp-s"><div class="cmp-sn" id="ct${i}">0</div><div class="cmp-sl">Through</div></div><div class="cmp-s"><div class="cmp-sn" id="cs${i}">0</div><div class="cmp-sl">km/h</div></div><div class="cmp-s"><div class="cmp-sn" id="cw${i}">0</div><div class="cmp-sl">Wait</div></div></div><div class="cmp-exp" onclick="toggleCA(${i})">\u25BC Assessment</div><div class="cmp-ass" id="ca${i}">${ADIMS.map((d,j)=>`<div class="asr"><div class="asd">${d}</div><div class="asw"><div class="asf" style="width:${tr.as[j]}%;background:${ACOLS[j]}"></div></div><div class="asv">${tr.as[j]}</div></div>`).join('')}</div><div class="cmp-fl" id="cf${i}"></div>`;grid.appendChild(cell);
+    const sp=tr.sc.map(v=>v/100);cSims.push({P:sp,cs:[],th:0,sp2:0,lf:''})})}
+function toggleCA(i){document.getElementById('ca'+i).classList.toggle('open')}
+function cmpF(){if(!cRun||cP!==4)return;cT++;cSims.forEach((sim,i)=>{const cv=document.getElementById('cc'+i);if(!cv)return;const ctx=cv.getContext('2d'),w=160,h=160,cx=80,cy=80;sim.sp2++;if(sim.sp2>55+Math.random()*35){sim.sp2=0;const d=['N','S','E','W'][Math.floor(Math.random()*4)];if(sim.cs.filter(c=>c.dir===d).length<3){let tp='car';if(sim.P[3]<.3){const r=Math.random();if(r<.1)tp='ambulance';else if(r<.22)tp='bus'}const nc=new Car(d,tp,cx,cy,w);nc.ao=cT;sim.cs.push(nc)}}
+if(cT===200){const nc=new Car('N','ambulance',cx,cy,w);nc.ao=cT;sim.cs.push(nc)}if(cT===400){const nc=new Car('E','badactor',cx,cy,w);nc.ao=cT;sim.cs.push(nc)}
+const fl=msg=>{sim.lf=msg};const lts=updC(sim.cs,cT,sim.P,cx,cy,w,fl);const bef=sim.cs.length;sim.cs=sim.cs.filter(c=>!c.off());sim.th+=bef-sim.cs.length;drS(ctx,w,h,sim.cs,lts,sim.P,cT);
+if(cT%20===0){const $=id=>document.getElementById(id);if($('ct'+i))$('ct'+i).textContent=sim.th;const avg=sim.cs.length?sim.cs.reduce((s,c)=>s+c.speed,0)/sim.cs.length:0;if($('cs'+i))$('cs'+i).textContent=Math.round(avg*40);const mxW=sim.cs.length?Math.max(0,...sim.cs.map(c=>c.wt)):0;if($('cw'+i))$('cw'+i).textContent=Math.round(mxW/60)+'s';if($('cf'+i)&&sim.lf)$('cf'+i).textContent=sim.lf}})}
+
+// ═══ CONNECT ═══
+function buildCon(){const grid=document.getElementById('conG');grid.innerHTML='';T.forEach(tr=>{const c=document.createElement('div');c.className='con-cd';c.innerHTML=`<div class="con-tr">${tr.name}</div><div class="con-ar">\u2193 maps to</div><div class="con-ai">${tr.aiMap}</div><div class="con-bd">${tr.aiBody}</div><div class="con-ex">${tr.aiEx}</div><div class="con-av">\u26A0 Autonomous vehicle implication: ${tr.avFail}</div>`;grid.appendChild(c)});
+  document.getElementById('deb').innerHTML=`<h3>Discussion Questions</h3><ol>
+<li>Think about how your organisation currently governs its AI systems \u2014 the actual rules, processes, and decision-making structures. Which design pattern from this lab does that most resemble? Was it an intentional choice, or did it emerge by default?</li>
+<li>You saw what happens when a bad actor enters each system. Which governance architectures are most vulnerable to agents that don\u2019t play by the rules? What does that tell you about enforcement in AI governance?</li>
+<li>If you were commissioning an autonomous vehicle fleet for a dense city, which design trade-offs would you accept? What is the first failure mode you would engineer against?</li>
+<li>Most ML systems optimise a loss function that maximises aggregate performance. What would it look like to design a system on a different objective? What would you gain or lose?</li>
+<li>You could redesign your system multiple times, each time improving one metric at another\u2019s cost. In your real governance work, which trade-off do you find hardest to accept?</li>
+<li>Can you combine elements of multiple governance approaches \u2014 rule-based structure with contextual exceptions and relational awareness? Where would the practical tensions emerge?</li></ol>`}
+
+// ═══ LOOP ═══
+function loop(){simF();cmpF();requestAnimationFrame(loop)}
+updNav();loop();
+</script>
+</body>
+</html>
